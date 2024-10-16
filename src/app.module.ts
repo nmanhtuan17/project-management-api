@@ -3,15 +3,16 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose/dist/mongoose.module';
+import { AuthModule } from '@/modules/auth';
 
 @Module({
   imports: [
-    ConfigModule.forRoot(),
-    MongooseModule.forRoot(process.env.MONGO_URI, {
-      // useNewUrlParser: true,
-      // useUnifiedTopology: true,
-      // useCreateIndex: true,
-    })
+    ConfigModule.forRoot({
+      envFilePath: './env',
+      isGlobal: true
+    }),
+    MongooseModule.forRoot(process.env.MONGO_URI),
+    AuthModule
   ],
   controllers: [AppController],
   providers: [AppService],
