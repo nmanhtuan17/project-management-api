@@ -1,9 +1,13 @@
-import { AuthService } from "@/modules/auth/auth.service";
-import { Controller, Get, Post } from "@nestjs/common";
+import { AuthService, RegisterDto } from "@/modules/auth";
+import { Body, Controller, Get, HttpException, HttpStatus, Post } from "@nestjs/common";
+import { ApiBearerAuth } from "@nestjs/swagger";
 
 @Controller('auth')
+@ApiBearerAuth()
 export class AuthController {
-  constructor(private authService: AuthService) {
+  constructor(
+    private authService: AuthService
+  ) {
 
   }
 
@@ -13,7 +17,7 @@ export class AuthController {
   }
 
   @Post('register')
-  register() {
+  async register(@Body() registerDto: RegisterDto) {
 
   }
 }

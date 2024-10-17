@@ -1,7 +1,7 @@
 import { Prop, Schema } from '@nestjs/mongoose';
 import mongoose from "mongoose";
 import { ApiProperty } from "@nestjs/swagger";
-import { SystemRoles } from '@/types';
+import { SystemRoles } from '@/common/types';
 
 @Schema({
   timestamps: true,
