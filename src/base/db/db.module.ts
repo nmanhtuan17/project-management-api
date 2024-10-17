@@ -4,7 +4,7 @@ import { TerminusModule } from "@nestjs/terminus";
 import { getModelToken, MongooseModule, SchemaFactory } from "@nestjs/mongoose";
 import * as models from "./models";
 import { DbService } from "./services";
-import paginate from "mongoose-paginate-v2";
+import * as paginate from "mongoose-paginate-v2";
 
 @Module({
   imports: [
