@@ -41,3 +41,31 @@ export class RegisterDto {
   })
   password: string;
 }
+
+export class LoginDto {
+  @ApiProperty({
+    default: "example@gmail.com"
+  })
+  @IsEmail({}, {
+    message: Messages.common.invalidEmail
+  })
+  @Transform(({ value }) => value.toString().toLowerCase())
+  email: string;
+
+  @ApiProperty({
+    default: "P@ssword~sample1"
+  })
+  @IsNotEmpty({
+    message: "PASSWORD_REQUIRED"
+  })
+  @IsStrongPassword({
+    minLength: 8,
+    minNumbers: 1,
+    minSymbols: 0,
+    minLowercase: 0,
+    minUppercase: 0
+  }, {
+    message: "PASSWORD_TOO_WEAK"
+  })
+  password: string;
+}

@@ -1,24 +1,31 @@
-import { Injectable } from "@nestjs/common";
-import { RegisterDto } from "../auth/auth.dto";
+import { HttpStatus, Injectable } from "@nestjs/common";
+import { RegisterDto } from "../auth/dto/auth.dto";
 import { DbService } from "@/base/db/services";
 import { hashSync } from "bcrypt";
 import { SystemRoles } from "@/common/types";
 import { Md5 } from "ts-md5";
+import { ApiError } from "@/common/errors/api.error";
+import { Messages } from "@/base/config";
 
 @Injectable()
 export class UserService {
   constructor(
     private db: DbService
   ) { }
-  async create(data: RegisterDto, emailVerified: boolean = false) {
-    const {email, fullName, password} = data
+  
+  async create(data: RegisterDto, preVerified: boolean = false) {
+    const { email, fullName, password } = data
+    const existing = await this.db.user.findOne({ email });
+    if (existing) throw new ApiError(Messages.auth.emailUsed, HttpStatus.BAD_REQUEST);
     return this.db.user.create({
+      email,
       fullName,
       password: hashSync(password, 10),
-      email,
-      emailVerified,
+      emailVerified: preVerified,
       role: SystemRoles.USER,
       avatar: `https://gravatar.com/avatar/${Md5.hashStr(email)}`
     })
   }
+
+
 }

@@ -11,4 +11,9 @@ export const configuration = () => ({
     },
     ignoreMailVerification: process.env.IGNORE_EMAIL_VERIFICATION === "1" || process.env.IGNORE_EMAIL_VERIFICATION === "true"
   },
+  webDomain: process.env.WEB_DOMAIN,
+  mail: {
+    mailgunKey: process.env.MAILGUN_KEY,
+    domain: process.env.MAILGUN_DOMAIN
+  }
 });
