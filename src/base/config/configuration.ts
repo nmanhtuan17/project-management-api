@@ -13,7 +13,7 @@ export const configuration = () => ({
   },
   webDomain: process.env.WEB_DOMAIN,
   mail: {
-    mailgunKey: process.env.MAILGUN_KEY,
-    domain: process.env.MAILGUN_DOMAIN
+    mailgunKey: process.env.MAIL_KEY,
+    domain: process.env.MAIL_DOMAIN
   }
 });

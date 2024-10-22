@@ -1,4 +1,5 @@
 import { Messages } from "@/base/config";
+import { SystemRoles } from "@/common/types";
 import { ApiProperty } from "@nestjs/swagger";
 import { Transform } from "class-transformer";
 import { IsEmail, IsNotEmpty, IsString, IsStrongPassword } from "class-validator";
@@ -68,4 +69,25 @@ export class LoginDto {
     message: "PASSWORD_TOO_WEAK"
   })
   password: string;
+}
+
+export interface Payload {
+  userId: string;
+  fullName: string;
+  email: string;
+  role: SystemRoles;
+  sessionId: string;
+}
+
+export interface JwtSign {
+  access_token: string;
+  refresh_token: string;
+}
+
+export interface JwtPayload {
+  sub: string;
+  fullName: string;
+  email: string;
+  role: SystemRoles;
+  sessionId: string;
 }
