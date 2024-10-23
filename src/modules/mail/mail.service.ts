@@ -1,8 +1,5 @@
 import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
-import Mailgun, { MailgunMessageData } from "mailgun.js";
-import * as FormData from 'form-data';
-import { IMailgunClient } from "mailgun.js/Interfaces";
 import { User } from "@/base/db";
 import Handlebars from "handlebars";
 import { readFile } from "fs/promises";
@@ -28,7 +25,12 @@ export class MailService {
       From: `noreply@${this.emailDomain}`,
       To: user.email,
       Subject: "Please verify your account",
-      HtmlBody: `<p>${code}</p>`
+      HtmlBody: await this.renderEmail('auth/verify', {
+        title: 'Verify account',
+        link,
+        code,
+        fullName: user.fullName,
+      }),
     });
   }
 
@@ -36,15 +38,6 @@ export class MailService {
     const res = await this.client.sendEmail(data);
     return res
   }
-
-  // async sendMail(data: MailgunMessageData) {
-  //   const res = await this.client.messages.create(this.emailDomain, data);
-  //   if(res.status !== 200){
-  //     throw new Error("Failed to send email.");
-  //   }
-  //   return res;
-  // }
-
 
   private async renderEmail<T>(templateName: string, data: T) {
     const templateContent = await this.loadTemplate(templateName);
