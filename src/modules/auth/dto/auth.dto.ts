@@ -91,3 +91,49 @@ export interface JwtPayload {
   role: SystemRoles;
   sessionId: string;
 }
+
+export class ResetPasswordDto {
+  @ApiProperty({
+    default: "example@gmail.com"
+  })
+  @IsEmail({}, {
+    message: Messages.common.invalidEmail
+  })
+  @Transform(({ value }) => value.toString().toLowerCase())
+  email: string;
+}
+
+export class ChangePasswordDto {
+  @ApiProperty({
+    default: "P@ssword~sample1"
+  })
+  @IsNotEmpty({
+    message: "OLD_PASSWORD_REQUIRED"
+  })
+  oldPassword: string;
+
+  @ApiProperty({
+    default: "P@ssword~sample1"
+  })
+  @IsNotEmpty({
+    message: "NEW_PASSWORD_REQUIRED"
+  })
+  @IsStrongPassword({
+    minLength: 8,
+    minNumbers: 1,
+    minSymbols: 0,
+    minLowercase: 0,
+    minUppercase: 0
+  }, {
+    message: "PASSWORD_TOO_WEAK"
+  })
+  newPassword: string;
+
+  @ApiProperty({
+    default: "P@ssword~sample1"
+  })
+  @IsNotEmpty({
+    message: "CONFIRM_PASSWORD_REQUIRED"
+  })
+  confirmPassword: string;
+}

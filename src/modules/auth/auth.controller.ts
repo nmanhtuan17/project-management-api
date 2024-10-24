@@ -1,13 +1,15 @@
-import { Body, Controller, Get, HttpException, HttpStatus, Post, UnauthorizedException } from "@nestjs/common";
+import { Body, Controller, Get, HttpException, HttpStatus, Post, UnauthorizedException, Request, UseGuards } from "@nestjs/common";
 import { ApiBearerAuth } from "@nestjs/swagger";
 import { AuthService } from "./auth.service";
-import { LoginDto, RegisterDto } from "./dto/auth.dto";
+import { ChangePasswordDto, LoginDto, Payload, RegisterDto, ResetPasswordDto } from "./dto/auth.dto";
 import { UserService } from "../user/user.service";
 import { Messages } from "@/base/config";
 import { ApiError } from "@/common/errors/api.error";
 import { DbService } from "@/base/db/services";
 import { VerifyUserDto } from "@/modules/auth/dto/verify.dto";
 import { ConfigService } from "@nestjs/config";
+import { compareSync, hashSync } from "bcrypt";
+import { JwtAuthGuard } from "./guards/jwt-auth.guard";
 
 @Controller('auth')
 @ApiBearerAuth()
@@ -68,10 +70,56 @@ export class AuthController {
       code
     });
     if (!verificationCode) return false;
+    user.emailVerified = true
     await user.save();
     return {
       message: "EMAIL_VERIFIED",
       status: HttpStatus.OK
     };
+  }
+
+  @Post("reset-password")
+  async resetPassword(
+    @Body() payload: ResetPasswordDto
+  ) {
+    const { email } = payload
+    const user = await this.db.user.findOne({ email })
+    if (!user) throw new ApiError(Messages.common.invalidEmail, HttpStatus.BAD_REQUEST);
+
+
+    return {
+      message: '',
+      status: HttpStatus.OK
+    }
+  }
+
+  @Post('change-password')
+  @UseGuards(JwtAuthGuard)
+  async changePassword(
+    @Body() changePasswordDto: ChangePasswordDto,
+    @Request() payload: Payload
+  ) {
+    console.log(payload)
+    // const {
+    //   oldPassword,
+    //   newPassword,
+    //   confirmPassword
+    // } = changePasswordDto;
+    // if (newPassword !== confirmPassword) throw new HttpException(Messages.auth.passwordsNotMatch, HttpStatus.BAD_REQUEST);
+    // const user = await this.db.user.findOne({
+    //   email: payload.email
+    // });
+    // if (user.password.trim() !== "" && !compareSync(oldPassword, user.password)) {
+    //   throw new UnauthorizedException(Messages.auth.wrongOldPassword);
+    // }
+    // user.password = hashSync(newPassword, 10);
+    // await user.save();
+    // return {
+    //   data: (await this.user.getById(payload.userId)).toJSON(),
+    //   message: Messages.auth.passwordUpdated
+    // };
+    return {
+      message: ''
+    }
   }
 }

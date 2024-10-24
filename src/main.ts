@@ -12,7 +12,6 @@ async function bootstrap() {
     .setTitle('Project Management')
     .setDescription('Project Management API description')
     .setVersion('1.0')
-    .addTag('PM')
     .addBearerAuth(
       {
         description: `[just text field] Please enter token in following format: Bearer <JWT>`,

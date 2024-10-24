@@ -12,7 +12,7 @@ export class UserService {
   constructor(
     private db: DbService
   ) { }
-  
+
   async create(data: RegisterDto, preVerified: boolean = false) {
     const { email, fullName, password } = data
     const existing = await this.db.user.findOne({ email });
@@ -27,5 +27,9 @@ export class UserService {
     })
   }
 
-
+  getById(id: string) {
+    return this.db.user.findOne({
+      _id: id
+    }).select("-password");
+  }
 }

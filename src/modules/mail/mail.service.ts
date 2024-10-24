@@ -34,6 +34,22 @@ export class MailService {
     });
   }
 
+  async sendResetPassword(user: User, code: string) {
+    const origin = this.config.get('webDomain');
+    const link = `${origin}/auth/reset-password?code=${code}&email=${user.email}`
+    return this.sendEmail({
+      To: user.email,
+      From: `noreply@${this.emailDomain}`,
+      Subject: "Reset password",
+      HtmlBody: await this.renderEmail('auth/reset-password', {
+        title: 'Reset password request',
+        link,
+        code,
+        fullName: user.fullName,
+      }),
+    });
+  }
+
   async sendEmail(data: Message) {
     const res = await this.client.sendEmail(data);
     return res
