@@ -11,6 +11,7 @@ export const Messages = {
     invalidVerification: 'INVALID_VERIFICATION',
     verificationEmailSent: 'VERIFICATION_EMAIL_SENT',
     sessionExpired: 'SESSION_EXPIRED',
+    passwordWasSent: 'NEWPASSWORD_SENT_TO_YOUR_MAIL'
   },
   common: {
     invalidUser: 'INVALID_USER',

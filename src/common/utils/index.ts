@@ -53,3 +53,26 @@ export function compareArrayString(source: any[], dest: any[]) {
 
   return true;
 }
+
+export function generatePassword(length: number = 12) {
+  if (length < 8) {
+    throw new Error("Độ dài mật khẩu phải từ 8 ký tự trở lên.");
+  }
+  const uppercase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  const lowercase = "abcdefghijklmnopqrstuvwxyz";
+  const digits = "0123456789";
+  const special = "!@#$%&-_=?";
+  let password = [
+    uppercase[Math.floor(Math.random() * uppercase.length)],
+    lowercase[Math.floor(Math.random() * lowercase.length)],
+    digits[Math.floor(Math.random() * digits.length)],
+    special[Math.floor(Math.random() * special.length)]
+  ];
+
+  const allCharacters = uppercase + lowercase + digits + special;
+  for (let i = 4; i < length; i++) {
+    password.push(allCharacters[Math.floor(Math.random() * allCharacters.length)]);
+  }
+  password = password.sort(() => Math.random() - 0.5);
+  return password.join('');
+}

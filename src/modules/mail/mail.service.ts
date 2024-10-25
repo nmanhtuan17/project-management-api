@@ -36,6 +36,7 @@ export class MailService {
 
   async sendResetPassword(user: User, code: string) {
     const origin = this.config.get('webDomain');
+    this.emailDomain = this.config.get('mail.domain');
     const link = `${origin}/auth/reset-password?code=${code}&email=${user.email}`
     return this.sendEmail({
       To: user.email,
