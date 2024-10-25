@@ -5,6 +5,10 @@ export const configuration = () => ({
     uri: process.env.MONGO_URI
   },
   auth: {
+    google: {
+      client_id: process.env.GOOGLE_CLIENT_ID,
+      client_secret: process.env.GOOGLE_CLIENT_SECRET
+    },
     jwt: {
       secret: process.env.JWT_SECRET,
       refreshSecret: process.env.JWT_REFRESH_SECRET

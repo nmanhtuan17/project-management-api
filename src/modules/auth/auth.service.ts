@@ -1,9 +1,9 @@
 import { User } from "@/base/db";
 import { DbService } from "@/base/db/services";
-import { randomString } from "@/common/utils";
+import { generatePassword, randomString } from "@/common/utils";
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { MailService } from "../mail/mail.service";
-import { compare } from "bcrypt";
+import { compare, hashSync } from "bcrypt";
 import { HydratedDocument } from "mongoose";
 import { JwtPayload, JwtSign, Payload } from "@/modules/auth/dto/auth.dto";
 import { ConfigService } from "@nestjs/config";
@@ -85,11 +85,20 @@ export class AuthService {
     await this.mail.sendUserVerification(user, verificationCode);
   }
 
+  public async sendNewPassword(email: string) {
+    const newPassword = generatePassword(8);
+    const user = await this.db.user.findOne({ email })
+    user.password = hashSync(newPassword, 10);
+
+    await user.save()
+    await this.mail.sendResetPassword(user, newPassword)
+  }
+
 
   private getRefreshToken(sub: string, sessionId: string): string {
     return this.jwt.sign({ sub, sessionId }, {
       secret: this.config.get("auth.jwt.refreshSecret"),
-      expiresIn: "7d" // Set greater than the expiresIn of the access_token
+      expiresIn: "7d"
     });
   }
 
