@@ -85,7 +85,7 @@ export interface JwtSign {
 }
 
 export interface JwtPayload {
-  userId: string;
+  sub: string;
   fullName: string;
   email: string;
   role: SystemRoles;
