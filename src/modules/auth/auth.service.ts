@@ -37,7 +37,7 @@ export class AuthService {
 
   public jwtSign(data: Payload): JwtSign {
     const payload: JwtPayload = {
-      sub: data.userId,
+      userId: data.userId,
       fullName: data.fullName,
       email: data.email,
       role: data.role,
@@ -46,7 +46,7 @@ export class AuthService {
 
     return {
       access_token: this.jwt.sign(payload),
-      refresh_token: this.getRefreshToken(payload.sub, payload.sessionId)
+      refresh_token: this.getRefreshToken(payload.userId, payload.sessionId)
     };
   }
 
@@ -95,8 +95,8 @@ export class AuthService {
   }
 
 
-  private getRefreshToken(sub: string, sessionId: string): string {
-    return this.jwt.sign({ sub, sessionId }, {
+  private getRefreshToken(userId: string, sessionId: string): string {
+    return this.jwt.sign({ userId, sessionId }, {
       secret: this.config.get("auth.jwt.refreshSecret"),
       expiresIn: "7d"
     });
