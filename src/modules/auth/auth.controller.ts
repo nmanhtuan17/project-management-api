@@ -119,12 +119,11 @@ export class AuthController {
   }
 
   @Post('change-password')
-  @UseGuards(AuthGuard)
+  @UseGuards(JwtAuthGuard)
   async changePassword(
     @Body() changePasswordDto: ChangePasswordDto,
     @ReqUser() payload: Payload,
   ) {
-    console.log(payload);
     const { oldPassword, newPassword, confirmPassword } = changePasswordDto;
     if (newPassword !== confirmPassword) throw new HttpException(Messages.auth.passwordsNotMatch, HttpStatus.BAD_REQUEST,);
     const user = await this.db.user.findOne({
