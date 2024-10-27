@@ -1,4 +1,6 @@
 export * from './user.schema'
 export * from './project.schema'
+export * from './project-member.schema'
 export * from './verification-code.schema'
 export * from './session.schema'
+export * from './project-invitation.schema'

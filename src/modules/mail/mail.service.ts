@@ -1,10 +1,12 @@
 import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
-import { User } from "@/base/db";
+import { Project, ProjectMember, User } from "@/base/db";
 import Handlebars from "handlebars";
 import { readFile } from "fs/promises";
 import * as path from "node:path";
 import { ServerClient, Message } from "postmark";
+import { ProjectInvitation } from "@/base/db/models/project-invitation.schema";
+import { Payload } from "../auth/dto/auth.dto";
 
 @Injectable()
 export class MailService {
@@ -49,6 +51,27 @@ export class MailService {
         fullName: user.fullName,
       }),
     });
+  }
+
+  async sendInvitation(
+    project: Project,
+    owner: Payload,
+    user: User,
+    invitation: ProjectInvitation
+  ) {
+    const origin = this.config.get('webDomain');
+    this.emailDomain = this.config.get('mail.domain');
+    const link = `${origin}/projects/${project._id}/members/join?code=${invitation.code}`
+    return this.sendEmail({
+      To: user.email,
+      From: `noreply@${this.emailDomain}`,
+      Subject: 'Invitation to project',
+      HtmlBody: await this.renderEmail('project/invitation', {
+        title: 'Invitation to project',
+        link,
+        fullName: user.fullName,
+      }),
+    })
   }
 
   async sendEmail(data: Message) {
