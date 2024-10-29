@@ -42,8 +42,8 @@ jobs:
           DOCKER_IMAGE: ${{ secrets.DOCKER_USERNAME }}/project-manager-api:latest
         run: |
           ssh -o StrictHostKeyChecking=no -i ec2-key.pem ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
-            docker pull $DOCKER_IMAGE
-            docker stop my_container || true
-            docker rm my_container || true
-            docker run -d --name my_container -p 3000:3000 $DOCKER_IMAGE
+            sudo docker pull $DOCKER_IMAGE
+            sudo docker stop my_container || true
+            sudo docker rm my_container || true
+            sudo docker run -d --name my_container -p 3000:3000 $DOCKER_IMAGE
           EOF
