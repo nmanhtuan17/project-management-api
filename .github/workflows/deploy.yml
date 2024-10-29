@@ -7,7 +7,6 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
-   # This step is new
       - name: Login to Docker Hub
         uses: docker/login-action@v1
         with:
@@ -15,6 +14,25 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
       - name: Build Docker Image
         run: docker build -t tuaans/project-manager-api .
-   # This step is also new
       - name: Push Docker Image
         run: docker push tuaans/project-manager-api
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install SSH key
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
+      - name: Deploy to EC2 
+        run: |
+          ssh -o StrictHostKeyChecking=no ec2-user@172.31.22.199.compute-1.amazonaws.com \\
+          'if sudo docker ps -q --filter "status=running" | grep -q .; then \\
+            sudo docker stop $(sudo docker ps -q --filter "status=running"); \\
+          fi && \\
+          if sudo docker ps -a -q | grep -q .; then \\
+            sudo docker rm $(sudo docker ps -a -q); \\
+          fi && \\
+          sudo docker pull tuaans/project-manager-api && \\
+          sudo docker run -d -p 3000:3000 tuaans/project-manager-api && \\
+          sudo docker image prune -f'
