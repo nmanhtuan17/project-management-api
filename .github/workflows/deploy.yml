@@ -1,41 +1,49 @@
-name: Docker Build and Deploy
+name: Build and Deploy Docker to EC2
+
 on:
-  workflow_dispatch:
+  push:
+    branches:
+      - main
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-      - name: Login to Docker Hub
-        uses: docker/login-action@v1
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-      - name: Build Docker Image
-        run: docker build -t tuaans/project-manager-api .
-      - name: Push Docker Image
-        run: docker push tuaans/project-manager-api
+
+      - name: Build Docker image
+        run: |
+          docker build -t project-manager-api:latest .
+
+      - name: Push Docker image to Docker Hub
+        run: |
+          docker tag project-manager-api:latest tuaans/project-manager-api:latest
+          docker push tuaans/project-manager-api:latest
+
   deploy:
     needs: build
     runs-on: ubuntu-latest
+
     steps:
-      - name: Install SSH key
-        uses: webfactory/ssh-agent@v0.9.0
-        with:
-          ssh-private-key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
-      - name: Deploy to EC2 
+      - name: Download SSH key
         run: |
-          ssh -o StrictHostKeyChecking=no ubuntu@ec2-54-255-172-244.ap-southeast-1.compute.amazonaws.com << 'EOF'
-            if sudo docker ps -q --filter "status=running" | grep -q .; then
-              sudo docker stop $(sudo docker ps -q --filter "status=running")
-            fi
-            
-            if sudo docker ps -a -q | grep -q .; then
-              sudo docker rm $(sudo docker ps -a -q)
-            fi
-            
-            sudo docker pull tuaans/project-manager-api
-            sudo docker run -d -p 3000:3000 tuaans/project-manager-api
-            sudo docker image prune -f
+          echo "${{ secrets.EC2_KEY }}" > ec2-key.pem
+          chmod 600 ec2-key.pem
+
+      - name: Deploy to EC2
+        env:
+          DOCKER_IMAGE: ${{ secrets.DOCKER_USERNAME }}/project-manager-api:latest
+        run: |
+          ssh -o StrictHostKeyChecking=no -i ec2-key.pem ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
+            docker pull $DOCKER_IMAGE
+            docker stop my_container || true
+            docker rm my_container || true
+            docker run -d --name my_container -p 3000:3000 $DOCKER_IMAGE
           EOF
