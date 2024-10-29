@@ -26,13 +26,16 @@ jobs:
           ssh-private-key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
       - name: Deploy to EC2 
         run: |
-          ssh -o StrictHostKeyChecking=no ec2-user@ec2-18-139-227-223.ap-southeast-1.compute.amazonaws.com \\
-          'if sudo docker ps -q --filter "status=running" | grep -q .; then \\
-            sudo docker stop $(sudo docker ps -q --filter "status=running"); \\
-          fi && \\
-          if sudo docker ps -a -q | grep -q .; then \\
-            sudo docker rm $(sudo docker ps -a -q); \\
-          fi && \\
-          sudo docker pull tuaans/project-manager-api && \\
-          sudo docker run -d -p 3000:3000 tuaans/project-manager-api && \\
-          sudo docker image prune -f'
+          ssh -o StrictHostKeyChecking=no ec2-user@ec2-18-139-227-223.ap-southeast-1.compute.amazonaws.com << 'EOF'
+            if sudo docker ps -q --filter "status=running" | grep -q .; then
+              sudo docker stop $(sudo docker ps -q --filter "status=running")
+            fi
+            
+            if sudo docker ps -a -q | grep -q .; then
+              sudo docker rm $(sudo docker ps -a -q)
+            fi
+            
+            sudo docker pull tuaans/project-manager-api
+            sudo docker run -d -p 3000:3000 tuaans/project-manager-api
+            sudo docker image prune -f
+          EOF
