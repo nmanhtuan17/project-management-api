@@ -47,6 +47,6 @@ jobs:
             fi
             
             sudo docker pull tuaans/project-manager-api
-            sudo docker run -d -p 3000:3000 tuaans/project-manager-api
+            sudo docker run -d -p 80:3000 tuaans/project-manager-api
             sudo docker image prune -f
           EOF

@@ -10,6 +10,6 @@ COPY . .
 # Build the NestJS application
 RUN npm run build
 # Expose port
-EXPOSE 3000
+EXPOSE 80
 # Run the NestJS application (will use the build we just created)
 CMD ["bash", "-c", "npm run start:prod"]
