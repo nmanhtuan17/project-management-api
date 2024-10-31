@@ -37,7 +37,7 @@ jobs:
           ssh-private-key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
       - name: Deploy to EC2 
         run: |
-          ssh -o StrictHostKeyChecking=no ubuntu@ec2-54-169-250-237.ap-southeast-1.compute.amazonaws.com << 'EOF'
+          ssh -o StrictHostKeyChecking=no ubuntu@ec2-18-136-204-24.ap-southeast-1.compute.amazonaws.com << 'EOF'
             if sudo docker ps -q --filter "status=running" | grep -q .; then
               sudo docker stop $(sudo docker ps -q --filter "status=running")
             fi
