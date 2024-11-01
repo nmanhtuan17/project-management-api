@@ -9,6 +9,15 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
+      - name: Create .env file
+        run: |
+          echo "MONGO_URI=${{ secrets.MONGO_URI }}" >> .env
+          echo "MAIL_KEY=${{ secrets.MAIL_KEY }}" >> .env
+          echo "MAIL_DOMAIN=${{ secrets.MAIL_DOMAIN }}" >> .env
+          echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> .env
+          echo "JWT_REFRESH_SECRET=${{ secrets.JWT_REFRESH_SECRET }}" >> .env
+          echo "GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}" >> .env
+          echo "GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}" >> .env
       - name: Login to Docker Hub
         uses: docker/login-action@v1
         with:
@@ -28,7 +37,7 @@ jobs:
           ssh-private-key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
       - name: Deploy to EC2 
         run: |
-          ssh -o StrictHostKeyChecking=no ubuntu@ec2-13-215-228-39.ap-southeast-1.compute.amazonaws.com << 'EOF'
+          ssh -o StrictHostKeyChecking=no ubuntu@ec2-18-136-204-24.ap-southeast-1.compute.amazonaws.com << 'EOF'
             if sudo docker ps -q --filter "status=running" | grep -q .; then
               sudo docker stop $(sudo docker ps -q --filter "status=running")
             fi
@@ -38,6 +47,6 @@ jobs:
             fi
             
             sudo docker pull tuaans/project-manager-api
-            sudo docker run -d -p 3000:3000 tuaans/project-manager-api
+            sudo docker run -d -p 80:3000 tuaans/project-manager-api
             sudo docker image prune -f
           EOF
