@@ -4,6 +4,13 @@ export const configuration = () => ({
   db: {
     uri: process.env.MONGO_URI
   },
+  storage: {
+    s3: {
+      accessKeyId: process.env.S3_ACCESS_KEY_ID,
+      secretAccessKey: process.env.S3_SECRET_ACCESS_KEY,
+      bucketName: process.env.S3_BUCKET_NAME
+    }
+  },
   auth: {
     google: {
       client_id: process.env.GOOGLE_CLIENT_ID,

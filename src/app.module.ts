@@ -6,6 +6,7 @@ import { DbService } from '@/base/db/services';
 import { configuration } from '@/base/config';
 import { AuthModule } from './modules/auth/auth.module';
 import { ProjectModule } from './modules/project/project.module';
+import { TaskModule } from './modules/task/task.module';
 
 @Module({
   imports: [
@@ -22,7 +23,8 @@ import { ProjectModule } from './modules/project/project.module';
     }),
     DbModule,
     AuthModule,
-    ProjectModule
+    ProjectModule,
+    TaskModule
   ]
 })
 export class AppModule {}
