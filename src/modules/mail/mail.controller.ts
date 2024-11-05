@@ -1,5 +1,5 @@
 import { DbService } from "@/base/db/services";
-import { Controller, Post, Request } from "@nestjs/common";
+import { Body, Controller, Post, Request } from "@nestjs/common";
 
 @Controller("mails")
 export class MailController {
@@ -9,12 +9,12 @@ export class MailController {
 
   @Post('/postmark-webhook')
   async receiveEmail (
-    @Request() req
+    @Body() payload: any
   ) {
-    await this.db.email.create(req.body)
-    console.log(req.body)
+    await this.db.email.create(payload)
+    console.log(payload)
     return {
-      message: ""
+      data: payload
     }
   }
 }
