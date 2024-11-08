@@ -33,3 +33,13 @@ export class InviteMemberDto {
   @IsNotEmpty()
   user: string
 }
+
+export class VerifySlugDto {
+  @ApiProperty({
+    default: 'example'
+  })
+  @IsNotEmpty({
+    message: 'SLUG_IS_EMPTY'
+  })
+  slug: string;
+}
