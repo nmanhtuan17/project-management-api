@@ -137,3 +137,8 @@ export class ChangePasswordDto {
   })
   confirmPassword: string;
 }
+
+export class RefreshTokenDto {
+  @IsString()
+  refresh_token: string;
+}

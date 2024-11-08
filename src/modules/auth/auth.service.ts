@@ -1,7 +1,7 @@
 import { User } from "@/base/db";
 import { DbService } from "@/base/db/services";
 import { generatePassword, randomString } from "@/common/utils";
-import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
+import { HttpException, HttpStatus, Injectable, UnauthorizedException } from "@nestjs/common";
 import { MailService } from "../mail/mail.service";
 import { compare, hashSync } from "bcrypt";
 import { HydratedDocument } from "mongoose";
@@ -9,6 +9,7 @@ import { JwtPayload, JwtSign, Payload } from "@/modules/auth/dto/auth.dto";
 import { ConfigService } from "@nestjs/config";
 import { JwtService } from "@nestjs/jwt";
 import * as dayjs from "dayjs";
+import { Messages } from "@/base/config";
 
 @Injectable()
 export class AuthService {
@@ -100,6 +101,37 @@ export class AuthService {
       secret: this.config.get("auth.jwt.refreshSecret"),
       expiresIn: "7d"
     });
+  }
+
+  public validateRefreshToken(data: Payload, refreshToken: string): boolean {
+    if (!this.jwt.verify(refreshToken, { secret: this.config.get("auth.jwt.refreshSecret") })) {
+      return false;
+    }
+    const payload = this.jwt.decode<{ sub: string }>(refreshToken);
+    return payload.sub === data.userId;
+  }
+
+  public async jwtRefresh(refreshToken: string): Promise<JwtSign> {
+    const payload = this.jwt.decode(refreshToken);
+    const userId = payload.sub;
+    const user = await this.db.user.getById(userId);
+    if (!user) throw new Error("INVALID_USER");
+    const session = await this.db.session.getById(payload.sessionId);
+    if (!session) throw new UnauthorizedException(Messages.auth.sessionExpired);
+    session.expirationDate = dayjs().add(1, 'd').toDate();
+    await session.save();
+
+    return this.jwtSign({
+      userId: userId,
+      fullName: user.fullName,
+      email: user.email,
+      role: user.role,
+      sessionId: payload.sessionId,
+    });
+  }
+
+  public jwtDecode(token: string) {
+    return this.jwt.decode(token);
   }
 
 }

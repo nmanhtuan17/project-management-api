@@ -15,6 +15,7 @@ import {
   ChangePasswordDto,
   LoginDto,
   Payload,
+  RefreshTokenDto,
   RegisterDto,
   ResetPasswordDto,
 } from './dto/auth.dto';
@@ -141,5 +142,17 @@ export class AuthController {
       data: (await this.user.getById(payload.userId)).toJSON(),
       message: Messages.auth.passwordUpdated,
     };
+  }
+
+  
+  @UseGuards(JwtAuthGuard)
+  @Get("jwt/check")
+  public jwtCheck(@ReqUser() user: Payload): Payload {
+    return user;
+  }
+
+  @Post("jwt/refresh")
+  public jwtRefresh(@Body() data: RefreshTokenDto) {
+    return this.authService.jwtRefresh(data.refresh_token);
   }
 }
