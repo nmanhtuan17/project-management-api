@@ -1,12 +1,12 @@
 import { DbService } from "@/base/db/services";
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
-import { CreateProjectDto } from "./dto/project.dto";
+import { CreateProjectDto, UpdateColumnDto } from "./dto/project.dto";
 import { Payload } from "../auth/dto/auth.dto";
 import { Messages } from "@/base/config";
 import { ProjectRoles } from "@/common/types/project";
 import { randomString, slugify } from "@/common/utils";
 import { HydratedDocument } from "mongoose";
-import { Project } from "@/base/db";
+import { Column, Project } from "@/base/db";
 
 @Injectable()
 export class ProjectService {
@@ -87,5 +87,39 @@ export class ProjectService {
     })
   }
 
-  
+  async createBoard(projectId: string) {
+    const newColumn = await this.db.column.create({
+      id: 'new',
+      title: 'New column',
+      cards: []
+    })
+    return await this.db.projectBoard.create({
+      project: projectId,
+      columns: [newColumn._id.toString()]
+    })
+  }
+
+  async createColumn(projectId: string) {
+    const newColumn = await this.db.column.create({
+      id: 'new',
+      title: 'New column',
+      cards: []
+    })
+
+    const update = await this.db.projectBoard.findOneAndUpdate(
+      {project: projectId}, 
+      {$push: {columns: newColumn._id.toString()}},
+      {new: true}
+    )
+    return update
+  }
+
+  async updateColumn(columnId: string, payload: UpdateColumnDto) {
+    const column = await this.db.column.findOneAndUpdate(
+      {_id: columnId},
+      payload,
+      {new: true}
+    )
+    return column
+  }
 }

@@ -43,3 +43,17 @@ export class VerifySlugDto {
   })
   slug: string;
 }
+
+export class UpdateColumnDto {
+  @ApiProperty({
+    default: 'new_column'
+  })
+  @IsNotEmpty()
+  id: string;
+
+  @ApiProperty({
+    default: 'New Column'
+  })
+  @IsNotEmpty()
+  title: string;
+}

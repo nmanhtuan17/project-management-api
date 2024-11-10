@@ -1,9 +1,8 @@
-import { Injectable, OnApplicationBootstrap } from "@nestjs/common";
+import { Inject, Injectable, OnApplicationBootstrap } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { BaseRepository } from "@/base/db/repositories";
-import { Project, User, VerificationCode, Session, ProjectMember, Task, ProjectAttachment, ProjectLabel, Email, EmailAttachment, TaskActivity, TaskComment } from "@/base/db/models";
+import { Project, User, VerificationCode, Session, ProjectMember, Task, ProjectAttachment, ProjectLabel, Email, EmailAttachment, TaskActivity, TaskComment, ProjectInvitation, ProjectBoard, Column } from "@/base/db/models";
 import { PaginateModel } from "mongoose";
-import { ProjectInvitation } from "../models/project-invitation.schema";
 
 @Injectable()
 export class DbService implements OnApplicationBootstrap {
@@ -20,6 +19,8 @@ export class DbService implements OnApplicationBootstrap {
   emailAttachment: BaseRepository<EmailAttachment>;
   taskActivity: BaseRepository<TaskActivity>;
   taskComment: BaseRepository<TaskComment>;
+  projectBoard: BaseRepository<ProjectBoard>;
+  column: BaseRepository<Column>;
 
   constructor(
     @InjectModel(User.name)
@@ -48,6 +49,10 @@ export class DbService implements OnApplicationBootstrap {
     private taskActivityModel: PaginateModel<TaskActivity>,
     @InjectModel(TaskComment.name)
     private taskCommentModel: PaginateModel<TaskComment>,
+    @InjectModel(ProjectBoard.name)
+    private projectBoardModel: PaginateModel<ProjectBoard>,
+    @InjectModel(Column.name)
+    private columnModel: PaginateModel<Column>
   ) {
   }
 
@@ -65,5 +70,7 @@ export class DbService implements OnApplicationBootstrap {
     this.emailAttachment = new BaseRepository<EmailAttachment>(this.emailAttachmentModel)
     this.taskActivity = new BaseRepository<TaskActivity>(this.taskActivityModel)
     this.taskComment = new BaseRepository<TaskComment>(this.taskCommentModel)
+    this.projectBoard = new BaseRepository<ProjectBoard>(this.projectBoardModel)
+    this.column = new BaseRepository<Column>(this.columnModel)
   }
 }

@@ -1,10 +1,10 @@
-import { Body, Controller, Get, HttpException, HttpStatus, Inject, Param, Post, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get, HttpException, HttpStatus, Inject, Param, Post, Put, UseGuards } from "@nestjs/common";
 import { ProjectService } from "./project.service";
 import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 import { ApiBearerAuth } from "@nestjs/swagger";
 import { ReqUser } from "@/common/decorators/req-user.decorator";
 import { Payload } from "../auth/dto/auth.dto";
-import { CreateProjectDto, VerifySlugDto } from "./dto/project.dto";
+import { CreateProjectDto, UpdateColumnDto, VerifySlugDto } from "./dto/project.dto";
 import { DbService } from "@/base/db/services";
 import { Messages } from "@/base/config";
 import { ProjectRoles } from "@/common/types/project";
@@ -36,11 +36,9 @@ export class ProjectController {
     @Body() payload: CreateProjectDto,
     @ReqUser() user: Payload
   ) {
-    console.log(payload)
-    console.log(user)
     const project = await this.project.createProject(payload)
     await this.project.addMember(project._id.toString(), user.userId, ProjectRoles.OWNER)
-
+    await this.project.createBoard(project._id.toString())
     return {
       data: project,
       message: Messages.project.projectCreated,
@@ -56,6 +54,45 @@ export class ProjectController {
     if (slug) throw new HttpException(Messages.project.slugExists, HttpStatus.CONFLICT)
     return {
       message: 'SLUG_VERIFIED',
+      status: HttpStatus.OK
+    }
+  }
+
+  @Get('/:projectId/board')
+  async getProjectBoard (
+    @Param('projectId') projectId: string
+  ) {
+    const projectBoard = await this.db.projectBoard.find({project: projectId}).populate('columns')
+
+    return {
+      data: projectBoard,
+      message: 'SUCCESS',
+      status: HttpStatus.OK
+    }
+  }
+
+  @Post('/:projectId/column')
+  async createColumn (
+    @Param('projectId') projectId: string
+  ) {
+    const board = await this.project.createColumn(projectId)
+    return {
+      data: board,
+      message: 'COLUMN_UPDATED',
+      status: HttpStatus.CREATED
+    }
+  }
+
+  @Put('/:projectId/column/:columnId')
+  async updateColumn (
+    @Param('projectId') projectId: string,
+    @Param('columnId') columnId: string,
+    @Body() payload: UpdateColumnDto
+  ) {
+    const update = await this.project.updateColumn(columnId, payload)
+
+    return {
+      message: 'COLUMN_UPDATED',
       status: HttpStatus.OK
     }
   }
