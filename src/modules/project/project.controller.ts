@@ -9,6 +9,7 @@ import { DbService } from "@/base/db/services";
 import { Messages } from "@/base/config";
 import { ProjectRoles } from "@/common/types/project";
 import { HttpError } from "postmark/dist/client/errors/Errors";
+import { ProjectManagerOrAboveRequired } from "./decorators/project.decorator";
 
 @Controller('projects')
 @ApiBearerAuth()
@@ -63,7 +64,7 @@ export class ProjectController {
     @Param('projectId') projectId: string
   ) {
     const projectBoard = await this.db.projectBoard.find({project: projectId}).populate('columns')
-
+    if(!projectBoard) throw new HttpException('NOT_FOUND', HttpStatus.NOT_FOUND)
     return {
       data: projectBoard,
       message: 'SUCCESS',
@@ -72,10 +73,12 @@ export class ProjectController {
   }
 
   @Post('/:projectId/column')
+  @ProjectManagerOrAboveRequired()
   async createColumn (
     @Param('projectId') projectId: string
   ) {
     const board = await this.project.createColumn(projectId)
+    if (!board) throw new HttpException("CREATE_FAILED", HttpStatus.BAD_REQUEST)
     return {
       data: board,
       message: 'COLUMN_UPDATED',
@@ -84,17 +87,17 @@ export class ProjectController {
   }
 
   @Put('/:projectId/column/:columnId')
+  @ProjectManagerOrAboveRequired()
   async updateColumn (
     @Param('projectId') projectId: string,
     @Param('columnId') columnId: string,
     @Body() payload: UpdateColumnDto
   ) {
     const update = await this.project.updateColumn(columnId, payload)
-
+    if(!update) throw new HttpException("COLUMN_NOT_FOUND", HttpStatus.NOT_FOUND)
     return {
       message: 'COLUMN_UPDATED',
       status: HttpStatus.OK
     }
   }
-
 }
