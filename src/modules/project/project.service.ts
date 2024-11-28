@@ -1,6 +1,6 @@
 import { DbService } from "@/base/db/services";
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
-import { CreateProjectDto, UpdateColumnDto } from "./dto/project.dto";
+import { CreateColumnDto, CreateProjectDto } from "./dto/project.dto";
 import { Payload } from "../auth/dto/auth.dto";
 import { Messages } from "@/base/config";
 import { ProjectRoles } from "@/common/types/project";
@@ -99,10 +99,10 @@ export class ProjectService {
     })
   }
 
-  async createColumn(projectId: string) {
+  async createColumn(projectId: string, payload: CreateColumnDto) {
     const newColumn = await this.db.column.create({
-      id: 'new',
-      title: 'New column',
+      id: payload.id,
+      title: payload.title,
       cards: []
     })
 
@@ -114,7 +114,7 @@ export class ProjectService {
     return update
   }
 
-  async updateColumn(columnId: string, payload: UpdateColumnDto) {
+  async updateColumn(columnId: string, payload: CreateColumnDto) {
     const column = await this.db.column.findOneAndUpdate(
       {_id: columnId},
       payload,

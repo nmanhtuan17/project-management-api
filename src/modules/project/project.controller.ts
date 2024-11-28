@@ -4,7 +4,7 @@ import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 import { ApiBearerAuth } from "@nestjs/swagger";
 import { ReqUser } from "@/common/decorators/req-user.decorator";
 import { Payload } from "../auth/dto/auth.dto";
-import { CreateProjectDto, UpdateColumnDto, VerifySlugDto } from "./dto/project.dto";
+import { CreateColumnDto, CreateProjectDto, VerifySlugDto } from "./dto/project.dto";
 import { DbService } from "@/base/db/services";
 import { Messages } from "@/base/config";
 import { ProjectRoles } from "@/common/types/project";
@@ -75,9 +75,10 @@ export class ProjectController {
   @Post('/:projectId/column')
   @ProjectManagerOrAboveRequired()
   async createColumn(
-    @Param('projectId') projectId: string
+    @Param('projectId') projectId: string,
+    @Body() payload: CreateColumnDto
   ) {
-    const board = await this.project.createColumn(projectId)
+    const board = await this.project.createColumn(projectId, payload)
     if (!board) throw new HttpException("CREATE_FAILED", HttpStatus.BAD_REQUEST)
     return {
       data: board,
@@ -91,7 +92,7 @@ export class ProjectController {
   async updateColumn(
     @Param('projectId') projectId: string,
     @Param('columnId') columnId: string,
-    @Body() payload: UpdateColumnDto
+    @Body() payload: CreateColumnDto
   ) {
     const update = await this.project.updateColumn(columnId, payload)
     if (!update) throw new HttpException("COLUMN_NOT_FOUND", HttpStatus.NOT_FOUND)

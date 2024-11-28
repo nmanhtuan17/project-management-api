@@ -44,7 +44,7 @@ export class VerifySlugDto {
   slug: string;
 }
 
-export class UpdateColumnDto {
+export class CreateColumnDto {
   @ApiProperty({
     default: 'new_column'
   })
