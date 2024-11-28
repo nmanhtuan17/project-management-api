@@ -100,7 +100,7 @@ export class ProjectController {
       status: HttpStatus.OK
     }
   }
-  @Delete('/:projectId/coulumn/:columnId')
+  @Delete('/:projectId/column/:columnId')
   @ProjectManagerOrAboveRequired()
   async deteteColumn(
     @Param('projectId') projectId: string,
