@@ -122,4 +122,8 @@ export class ProjectService {
     )
     return column
   }
+
+  async deleteColumn(columnId: string) {
+    return await this.db.column.deleteOne({_id: columnId})
+  }
 }

@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpException, HttpStatus, Inject, Param, Post, Put, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, Get, HttpException, HttpStatus, Inject, Param, Post, Put, UseGuards } from "@nestjs/common";
 import { ProjectService } from "./project.service";
 import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 import { ApiBearerAuth } from "@nestjs/swagger";
@@ -60,11 +60,11 @@ export class ProjectController {
   }
 
   @Get('/:projectId/board')
-  async getProjectBoard (
+  async getProjectBoard(
     @Param('projectId') projectId: string
   ) {
-    const projectBoard = await this.db.projectBoard.find({project: projectId}).populate('columns')
-    if(!projectBoard) throw new HttpException('NOT_FOUND', HttpStatus.NOT_FOUND)
+    const projectBoard = await this.db.projectBoard.find({ project: projectId }).populate('columns')
+    if (!projectBoard) throw new HttpException('NOT_FOUND', HttpStatus.NOT_FOUND)
     return {
       data: projectBoard,
       message: 'SUCCESS',
@@ -74,7 +74,7 @@ export class ProjectController {
 
   @Post('/:projectId/column')
   @ProjectManagerOrAboveRequired()
-  async createColumn (
+  async createColumn(
     @Param('projectId') projectId: string
   ) {
     const board = await this.project.createColumn(projectId)
@@ -88,16 +88,33 @@ export class ProjectController {
 
   @Put('/:projectId/column/:columnId')
   @ProjectManagerOrAboveRequired()
-  async updateColumn (
+  async updateColumn(
     @Param('projectId') projectId: string,
     @Param('columnId') columnId: string,
     @Body() payload: UpdateColumnDto
   ) {
     const update = await this.project.updateColumn(columnId, payload)
-    if(!update) throw new HttpException("COLUMN_NOT_FOUND", HttpStatus.NOT_FOUND)
+    if (!update) throw new HttpException("COLUMN_NOT_FOUND", HttpStatus.NOT_FOUND)
     return {
       message: 'COLUMN_UPDATED',
       status: HttpStatus.OK
     }
   }
+  @Delete('/:projectId/coulumn/:columnId')
+  @ProjectManagerOrAboveRequired()
+  async deteteColumn(
+    @Param('projectId') projectId: string,
+    @Param('columnId') columnId: string,
+  ) {
+    try {
+      await this.project.deleteColumn(columnId);
+      return {
+        message: 'COLUMN_UPDATED',
+        status: HttpStatus.OK
+      }
+    } catch (error) {
+      throw new HttpException("DELETE_FAIL", HttpStatus.BAD_REQUEST)
+    }
+  }
+
 }
