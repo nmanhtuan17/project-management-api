@@ -70,9 +70,14 @@ export class TaskController {
     const membership = await this.project.getProjectMember(projectId, payload.userId);
     const tasks = await this.db.task.paginate(filter, {
       populate: [
-        'assignees.user',
-        'attachments',
-        'labels',
+        {
+          path: 'assignees',
+          populate: {
+            path: 'user',
+          },
+        },
+        { path: 'attachments' },
+        { path: 'labels' }
       ],
       limit: paginationDto.limit,
       page: paginationDto.page,
