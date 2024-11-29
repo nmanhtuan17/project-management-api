@@ -69,7 +69,11 @@ export class TaskController {
 
     const membership = await this.project.getProjectMember(projectId, payload.userId);
     const tasks = await this.db.task.paginate(filter, {
-      populate: 'assignees attachments labels',
+      populate: [
+        'assignees.user',
+        'attachments',
+        'labels',
+      ],
       limit: paginationDto.limit,
       page: paginationDto.page,
       sort: (paginationDto.sortType === 'asc' ? '+' : '-') + paginationDto.sortBy,
@@ -169,11 +173,11 @@ export class TaskController {
       _id: taskId,
     }).populate('assignees');
     if (!task) throw new HttpException(Messages.task.taskNotFound, HttpStatus.NOT_FOUND);
-    let updatableFields = ['title', 'description', 'status', 'type', 'priority', 'dueDate', 'attachments', 'parentTask', 'labels', 'assignees'];
+    let updatableFields = ['title', 'description', 'status', 'type', 'priority', 'time', 'attachments', 'parentTask', 'labels', 'assignees'];
 
     for (let field of updatableFields) {
       if (updateTaskDto[field] && updateTaskDto[field] !== task[field]) {
-        if (field === 'dueDate' && updateTaskDto[field]?.toString() === task[field]?.toISOString()) continue;
+        if (field === 'time' && updateTaskDto[field]?.from.toString() === task[field]?.from.toISOString() && updateTaskDto[field]?.to.toString() === task[field]?.to.toISOString()) continue;
         if (field === 'attachments' && compareArrayString(updateTaskDto[field], task.attachments.map(a => a.toString()))) continue;
         if (field === 'assignees' && compareArrayString(updateTaskDto[field], task.assignees.map(a => a.toString()))) continue;
         if (field === 'labels' && compareArrayString(updateTaskDto[field], task.labels.map(a => a.toString()))) continue;
