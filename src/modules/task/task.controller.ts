@@ -325,7 +325,7 @@ export class TaskController {
       description: createTaskDto.description,
       type: createTaskDto.type,
       assignees: createTaskDto.assignees,
-      dueDate: createTaskDto.dueDate,
+      time: createTaskDto.time,
       archived: false,
       parentTask: parentTask?._id?.toString() ?? undefined,
       status: createTaskDto.status,

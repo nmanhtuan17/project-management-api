@@ -15,6 +15,19 @@ import {
 } from 'class-validator';
 import { enumToArray } from 'src/common/utils';
 
+export class TaskTime {
+
+  @IsDateString({}, {
+    message: Messages.common.invalidDate,
+  })
+  from: Date
+
+  @IsDateString({}, {
+    message: Messages.common.invalidDate,
+  })
+  to: Date
+}
+
 export class CreateTaskDto {
   @ApiProperty({
     type: String,
@@ -59,9 +72,11 @@ export class CreateTaskDto {
   @IsOptionalNonNullable()
   assignees?: string[];
 
-  @IsDateString()
+  @ApiProperty({
+    type: TaskTime
+  })
   @IsOptionalNonNullable()
-  dueDate?: Date;
+  time?: TaskTime;
 
   @ApiProperty({})
   @IsString()
@@ -77,9 +92,7 @@ export class CreateTaskDto {
   priority?: TaskPriority;
 
   @IsString()
-  @IsOptional()
-  @IsEnum(Object.values(TaskStatus))
-  status?: TaskStatus;
+  status?: string;
 }
 
 export class UpdateTaskDto {
@@ -123,10 +136,7 @@ export class UpdateTaskDto {
   @IsString({
     message: Messages.task.invalidTaskStatus,
   })
-  @IsEnum(Object.values(TaskStatus), {
-    message: Messages.task.invalidTaskStatus,
-  })
-  status?: TaskStatus;
+  status?: string;
 
   @ApiProperty({
     type: String,
@@ -141,13 +151,10 @@ export class UpdateTaskDto {
   priority?: TaskPriority;
 
   @ApiProperty({
-    type: Date,
+    type: TaskTime,
   })
   @IsOptionalNonNullable()
-  @IsDateString({}, {
-    message: Messages.common.invalidDate,
-  })
-  dueDate?: Date;
+  time?: TaskTime;
 
   @ApiProperty({
     type: Boolean,
@@ -269,5 +276,5 @@ export class TaskFilterDto {
   @Transform(({ value }) => {
     return value === 'true' ? true : value === 'false' ? false : null;
   })
-  archived ?: boolean;
+  archived?: boolean;
 }

@@ -8,6 +8,7 @@ import { TaskPriority, TaskStatus, TaskTypes } from "@/common/types/task";
 import { ProjectMember } from "./project-member.schema";
 import { ProjectLabel } from "./project-label.schema";
 import { ProjectAttachment } from "./project-attachment.schema";
+import { TaskTime } from "@/modules/task/dto/task.dto";
 
 @Schema({
   timestamps: true
@@ -49,11 +50,9 @@ export class Task {
 
   @ApiProperty()
   @Prop({
-    type: String,
-    enum: Object.values(TaskStatus),
-    default: TaskStatus.PENDING
+    type: String
   })
-  status?: TaskStatus;
+  status?: string;
 
   @ApiProperty()
   @Prop({
@@ -98,9 +97,9 @@ export class Task {
 
   @ApiProperty()
   @Prop({
-    type: Date
+    type: TaskTime
   })
-  dueDate?: Date;
+  time?: TaskTime;
 
   @ApiProperty()
   @Prop({
