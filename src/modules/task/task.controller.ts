@@ -182,7 +182,7 @@ export class TaskController {
 
     for (let field of updatableFields) {
       if (updateTaskDto[field] && updateTaskDto[field] !== task[field]) {
-        if (field === 'time' && updateTaskDto[field]?.from.toString() === task[field]?.from.toISOString() && updateTaskDto[field]?.to.toString() === task[field]?.to.toISOString()) continue;
+        if (field === 'time' && updateTaskDto[field]?.from.toString() === task[field]?.from.toString() && updateTaskDto[field]?.to.toString() === task[field]?.to.toString()) continue;
         if (field === 'attachments' && compareArrayString(updateTaskDto[field], task.attachments.map(a => a.toString()))) continue;
         if (field === 'assignees' && compareArrayString(updateTaskDto[field], task.assignees.map(a => a.toString()))) continue;
         if (field === 'labels' && compareArrayString(updateTaskDto[field], task.labels.map(a => a.toString()))) continue;
