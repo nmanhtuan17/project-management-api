@@ -238,7 +238,11 @@ export class TaskController {
     }
     Object.assign(task, updateTaskDto);
     await task.save();
-    let signAttachments = await task.populate('attachments assignees');
+    let signAttachments = await (await task.populate('attachments assignees'))
+      .populate({
+        path: 'assignees',
+        populate: 'user'
+      });
 
     return {
       message: Messages.task.taskUpdated,
