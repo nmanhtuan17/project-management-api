@@ -63,7 +63,7 @@ export class MailService {
     this.emailDomain = this.config.get('mail.domain');
     const link = `${origin}/projects/${project._id}/members/join?code=${invitation.code}`
     return this.sendEmail({
-      To: user.email,
+      To: user.internalEmail,
       From: `noreply@${this.emailDomain}`,
       Subject: 'Invitation to project',
       HtmlBody: await this.renderEmail('project/invitation', {

@@ -1,6 +1,8 @@
+import { Messages } from "@/base/config";
 import { ProjectTypes } from "@/common/types/project";
 import { ApiProperty } from "@nestjs/swagger";
-import { IsNotEmpty } from "class-validator";
+import { Transform } from "class-transformer";
+import { IsEmail, IsNotEmpty } from "class-validator";
 
 export class CreateProjectDto {
   @ApiProperty({
@@ -28,10 +30,13 @@ export class CreateProjectDto {
 
 export class InviteMemberDto {
   @ApiProperty({
-    default: '671dfbc3e7754b7b57a93e15'
+    default: "example@gmail.com"
   })
-  @IsNotEmpty()
-  user: string
+  @IsEmail({}, {
+    message: Messages.common.invalidEmail
+  })
+  @Transform(({ value }) => value.toString().toLowerCase())
+  email: string
 }
 
 export class VerifySlugDto {

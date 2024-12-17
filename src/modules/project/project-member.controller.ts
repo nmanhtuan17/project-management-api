@@ -41,8 +41,10 @@ export class ProjectMemberController {
     if (project.type === ProjectTypes.PERSONAL) {
       throw new HttpException(Messages.common.actionNotPermitted, HttpStatus.NOT_ACCEPTABLE)
     }
-    const { user } = payload
-    const userInvitting = await this.db.user.getById(user)
+    const { email } = payload
+    const userInvitting = await this.db.user.findOne({
+      internalEmail: email
+    })
     if (!userInvitting) throw new HttpException(Messages.common.invalidUser, HttpStatus.NOT_FOUND)
     const memberExisting = await this.db.projectMember.findOne({
       project: projectId,
@@ -53,9 +55,8 @@ export class ProjectMemberController {
     const newInvitation = await this.db.projectInvitation.create({
       project: projectId,
       code,
-      user
+      user: userInvitting._id.toString()
     })
-    console.log(project)
     await this.mail.sendInvitation(project, owner, userInvitting, newInvitation)
     return {
       message: Messages.project.invitedByEmail,

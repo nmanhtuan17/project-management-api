@@ -29,6 +29,13 @@ export class User {
   email: string;
 
   @ApiProperty()
+  @Prop({
+    type: String,
+    unique: true,
+  })
+  internalEmail?: string;
+
+  @ApiProperty()
   @Prop()
   emailVerified: boolean;
 
