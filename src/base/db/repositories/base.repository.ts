@@ -32,6 +32,10 @@ export class BaseRepository<T> {
     return this._repository.findOneAndUpdate(filter, update, options);
   }
 
+  findByIdAndUpdate(id: any, update?: UpdateQuery<T>, options?: QueryOptions<T>) {
+    return this._repository.findByIdAndUpdate(id, update, options)
+  }
+
   deleteMany(filter: FilterQuery<T>) {
     return this._repository.deleteMany(filter);
   }

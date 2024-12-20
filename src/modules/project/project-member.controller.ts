@@ -4,7 +4,7 @@ import { ApiBearerAuth } from "@nestjs/swagger";
 import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 import { ProjectService } from "./project.service";
 import { ReqUser } from "@/common/decorators/req-user.decorator";
-import { Payload } from "../auth/dto/auth.dto";
+import { AuthPayload } from "../auth/dto/auth.dto";
 import { ProjectManagerOrAboveRequired } from "./decorators/project.decorator";
 import { Messages } from "@/base/config";
 import { ProjectRoles, ProjectTypes } from "@/common/types/project";
@@ -34,7 +34,7 @@ export class ProjectMemberController {
   async inviteMember(
     @Param('projectId') projectId: string,
     @Body() payload: InviteMemberDto,
-    @ReqUser() owner: Payload
+    @ReqUser() owner: AuthPayload
   ) {
     const project = await this.db.project.getById(projectId)
     if (!project) throw new HttpException(Messages.project.invalidProject, HttpStatus.NOT_FOUND)

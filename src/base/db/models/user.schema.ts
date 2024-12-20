@@ -44,8 +44,6 @@ export class User {
   googleId?: string;
 
   @ApiProperty()
-  @Prop({
-    enum: Object.values(SystemRoles),
-  })
-  role: SystemRoles;
+  @Prop({})
+  bio?: string;
 }

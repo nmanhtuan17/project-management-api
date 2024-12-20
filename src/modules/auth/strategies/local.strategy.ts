@@ -2,7 +2,7 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { AuthService } from '../auth.service';
 import { Strategy } from 'passport-local';
-import { Payload } from '../dto/auth.dto';
+import { AuthPayload } from '../dto/auth.dto';
 
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy) {
@@ -10,7 +10,7 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
     super();
   }
 
-  public async validate(username: string, password: string): Promise<Payload> {
+  public async validate(username: string, password: string): Promise<AuthPayload> {
     const user = await this.auth.validateUser(username, password);
     if (!user) {
       throw new UnauthorizedException('Wrong Username or Password');
@@ -22,7 +22,6 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
       userId: user._id.toString(),
       fullName: user.fullName,
       email: user.email,
-      role: user.role,
       sessionId: session._id.toString(),
     };
   }

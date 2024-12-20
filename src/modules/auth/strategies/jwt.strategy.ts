@@ -3,7 +3,7 @@ import { Injectable, UnauthorizedException } from "@nestjs/common";
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
-import { JwtPayload, Payload } from "../dto/auth.dto";
+import { JwtPayload, AuthPayload } from "../dto/auth.dto";
 import { Messages } from "@/base/config";
 
 @Injectable()
@@ -19,7 +19,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
     });
   }
 
-  public async validate(payload: JwtPayload): Promise<Payload> {
+  public async validate(payload: JwtPayload): Promise<AuthPayload> {
     const session = await this.db.session.getById(payload.sessionId);
     if (!session) throw new UnauthorizedException(Messages.auth.sessionExpired);
     if (new Date() > session.expirationDate) {
@@ -30,7 +30,6 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
       userId: payload.sub,
       fullName: payload.fullName,
       email: payload.email,
-      role: payload.role,
       sessionId: payload.sessionId,
     };
   }

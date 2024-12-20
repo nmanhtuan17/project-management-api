@@ -32,6 +32,7 @@ export const Messages = {
     invalidAttachments: 'INVALID_ATTACHMENTS',
     invalidId: 'INVALID_ID',
     invalidMember: 'INVALID_MEMBER',
+    emailActived: 'INTERNAL_EMAIL_ALREADY_ACTIVE'
   },
   member: {
     emailAliasTooShort: 'EMAIL_ALIAS_TOO_SHORT',
@@ -141,67 +142,13 @@ export const Messages = {
     invalidParentTask: 'INVALID_PARENT_TASK',
     notProjectTask: 'NOT_PROJECT_TASK',
   },
-  post: {
-    commentTextRequired: 'COMMENT_TEXT_REQUIRED',
-    postNotFound: 'POST_NOT_FOUND',
-    commentNotFound: 'COMMENT_NOT_FOUND',
-    commentDeleted: 'COMMENT_DELETED',
-  },
-  integrations: {
-    invalidIntegration: 'INVALID_INTEGRATION',
-    notIntegrated: 'NOT_INTEGRATED',
-    invalidMailgunKey: 'INVALID_MAILGUN_KEY',
-    mailgunIntegrated: 'MAILGUN_INTEGRATED',
-    alreadyIntegrated: 'ALREADY_INTEGRATED',
-    invalidIntegrationData: 'INVALID_INTEGRATION_DATA',
-    updatedIntegration: 'INTEGRATION_UPDATED',
+  taskComment: {
+    commentTextRequired: 'COMMENT_TEXT_REQUIRED'
   },
   email: {
     invalidSubject: 'INVALID_SUBJECT',
     invalidBody: 'INVALID_BODY',
     emailSent: 'EMAIL_SENT',
-  },
-  recruitment: {
-    recruitmentCreated: 'RECRUITMENT_CREATED',
-    recruitmentNotFound: 'RECRUITMENT_NOT_FOUND',
-    recruitmentDeleted: 'RECRUITMENT_DELETED',
-    recruitmentUpdated: 'RECRUITMENT_UPDATED',
-    interviewSessionCreated: 'INTERVIEW_SESSION_CREATED',
-  },
-  candidate: {
-    candidateNotFound: 'CANDIDATE_NOT_FOUND',
-    candidateDeleted: 'CANDIDATE_DELETED',
-    candidateUpdated: 'CANDIDATE_UPDATED',
-  },
-  candidateResume: {
-    candidateResumeNotFound: 'CANDIDATE_RESUME_NOT_FOUND',
-    candidateResumeDeleted: 'CANDIDATE_RESUME_DELETED',
-    candidateResumeUpdated: 'CANDIDATE_RESUME_UPDATED',
-    failedToParseResume: 'FAILED_TO_PARSE_RESUME',
-  },
-  agenda: {
-    agendaCreated: 'AGENDA_CREATED',
-    agendaCreateFailed: "AGENDA_CREATE_FAIL_IS_NOT_PERMISSION",
-    eventCreated: 'EVENT_CREATED',
-    eventUpdated: 'EVENT_UPDATED',
-    eventDeleted: 'EVENT_DELETED',
-    eventNotFound: 'EVENT_NOT_FOUND',
-    agendaNotFound: 'AGENDA_NOT_FOUND',
-    agendaDeleted: 'AGENDA_DELETED',
-    agendaUpdated: 'AGENDA_UPDATED',
-    agendaPermission : 'AGENDA_NOT_PERMISSION',
-    agendaPrivacyIsNotInternal: 'AGENDA_PRIVACY_IS_NOT_INTERNAL',
-  },
-  agendaEvent: {
-    agendaEventNotFound: 'AGENDA_EVENT_NOT_FOUND',
-    agendaEventDeleted: 'AGENDA_EVENT_DELETED',
-    agendaEventUpdated: 'AGENDA_EVENT_UPDATED',
-  },
-  agendaPublicLink: {
-    agendaPubLicLinkExits: 'AGENDA_PUBLIC_LINK_EXISTS',
-    agendaPublicLinkNotFound: "AGENDA_PUBLIC_LINK_NOT_FOUND",
-    agendaPublicLinkDeleted: 'AGENDA_PUBLIC_LINK_DELETED',
-    agendaPublicLinkExpired : 'AGENDA_PUBLIC_LINK_EXPIRED'
   },
   thread: {
     threadCreated: 'THREAD_CREATED',
@@ -217,4 +164,5 @@ export const Messages = {
     emojiDeleted: 'EMOJI_DELETED',
     emojiUpdated: 'EMOJI_UPDATED',
   },
+  
 };

@@ -6,7 +6,7 @@ import { readFile } from "fs/promises";
 import * as path from "node:path";
 import { ServerClient, Message } from "postmark";
 import { ProjectInvitation } from "@/base/db/models/project-invitation.schema";
-import { Payload } from "../auth/dto/auth.dto";
+import { AuthPayload } from "../auth/dto/auth.dto";
 
 @Injectable()
 export class MailService {
@@ -55,7 +55,7 @@ export class MailService {
 
   async sendInvitation(
     project: Project,
-    owner: Payload,
+    owner: AuthPayload,
     user: User,
     invitation: ProjectInvitation
   ) {

@@ -5,7 +5,7 @@ import { HttpException, HttpStatus, Injectable, UnauthorizedException } from "@n
 import { MailService } from "../mail/mail.service";
 import { compare, hashSync } from "bcrypt";
 import { HydratedDocument } from "mongoose";
-import { JwtPayload, JwtSign, Payload } from "@/modules/auth/dto/auth.dto";
+import { JwtPayload, JwtSign, AuthPayload } from "@/modules/auth/dto/auth.dto";
 import { ConfigService } from "@nestjs/config";
 import { JwtService } from "@nestjs/jwt";
 import * as dayjs from "dayjs";
@@ -36,12 +36,11 @@ export class AuthService {
     return null;
   }
 
-  public jwtSign(data: Payload): JwtSign {
+  public jwtSign(data: AuthPayload): JwtSign {
     const payload: JwtPayload = {
       sub: data.userId,
       fullName: data.fullName,
       email: data.email,
-      role: data.role,
       sessionId: data.sessionId,
     };
 
@@ -64,7 +63,6 @@ export class AuthService {
       userId: user._id.toString(),
       fullName: user.fullName,
       email: user.email,
-      role: user.role,
       sessionId,
     });
   }
@@ -103,7 +101,7 @@ export class AuthService {
     });
   }
 
-  public validateRefreshToken(data: Payload, refreshToken: string): boolean {
+  public validateRefreshToken(data: AuthPayload, refreshToken: string): boolean {
     if (!this.jwt.verify(refreshToken, { secret: this.config.get("auth.jwt.refreshSecret") })) {
       return false;
     }
@@ -125,7 +123,6 @@ export class AuthService {
       userId: userId,
       fullName: user.fullName,
       email: user.email,
-      role: user.role,
       sessionId: payload.sessionId,
     });
   }

@@ -193,10 +193,10 @@ export class CreateTaskCommentDto {
     description: 'Comment text',
   })
   @IsString({
-    message: Messages.post.commentTextRequired,
+    message: Messages.taskComment.commentTextRequired,
   })
   @IsNotEmpty({
-    message: Messages.post.commentTextRequired,
+    message: Messages.taskComment.commentTextRequired,
   })
   text: string;
 }

@@ -14,7 +14,7 @@ import { AuthService } from './auth.service';
 import {
   ChangePasswordDto,
   LoginDto,
-  Payload,
+  AuthPayload,
   RefreshTokenDto,
   RegisterDto,
   ResetPasswordDto,
@@ -123,7 +123,7 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   async changePassword(
     @Body() changePasswordDto: ChangePasswordDto,
-    @ReqUser() payload: Payload,
+    @ReqUser() payload: AuthPayload,
   ) {
     const { oldPassword, newPassword, confirmPassword } = changePasswordDto;
     if (newPassword !== confirmPassword) throw new HttpException(Messages.auth.passwordsNotMatch, HttpStatus.BAD_REQUEST,);
@@ -147,7 +147,7 @@ export class AuthController {
   
   @UseGuards(JwtAuthGuard)
   @Get("jwt/check")
-  public jwtCheck(@ReqUser() user: Payload): Payload {
+  public jwtCheck(@ReqUser() user: AuthPayload): AuthPayload {
     return user;
   }
 

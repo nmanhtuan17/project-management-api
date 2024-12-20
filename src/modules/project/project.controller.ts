@@ -3,7 +3,7 @@ import { ProjectService } from "./project.service";
 import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 import { ApiBearerAuth } from "@nestjs/swagger";
 import { ReqUser } from "@/common/decorators/req-user.decorator";
-import { Payload } from "../auth/dto/auth.dto";
+import { AuthPayload } from "../auth/dto/auth.dto";
 import { CreateColumnDto, CreateProjectDto, VerifySlugDto } from "./dto/project.dto";
 import { DbService } from "@/base/db/services";
 import { Messages } from "@/base/config";
@@ -35,7 +35,7 @@ export class ProjectController {
   @Post('/')
   async createProject(
     @Body() payload: CreateProjectDto,
-    @ReqUser() user: Payload
+    @ReqUser() user: AuthPayload
   ) {
     const project = await this.project.createProject(payload)
     await this.project.addMember(project._id.toString(), user.userId, ProjectRoles.OWNER)

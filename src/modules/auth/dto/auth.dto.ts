@@ -71,11 +71,10 @@ export class LoginDto {
   password: string;
 }
 
-export interface Payload {
+export interface AuthPayload {
   userId: string;
   fullName: string;
   email: string;
-  role: SystemRoles;
   sessionId: string;
 }
 
@@ -88,7 +87,6 @@ export interface JwtPayload {
   sub: string;
   fullName: string;
   email: string;
-  role: SystemRoles;
   sessionId: string;
 }
 

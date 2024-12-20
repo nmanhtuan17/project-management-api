@@ -6,7 +6,7 @@ import { FilterQuery, HydratedDocument, Types } from "mongoose";
 import { Task } from "@/base/db";
 import { ReqUser } from "@/common/decorators/req-user.decorator";
 import { CreateTaskCommentDto, CreateTaskDto, TaskFilterDto, UpdateTaskDto } from "./dto/task.dto";
-import { Payload } from "../auth/dto/auth.dto";
+import { AuthPayload } from "../auth/dto/auth.dto";
 import { DbService } from "@/base/db/services";
 import { TaskService } from "./task.service";
 import { ProjectService } from "../project/project.service";
@@ -35,7 +35,7 @@ export class TaskController {
   @ApiTaskFilter()
   public async getProjectTasks(
     @Param('projectId') projectId: string,
-    @ReqUser() payload: Payload,
+    @ReqUser() payload: AuthPayload,
     @Pagination() paginationDto?: PaginationDto,
     @TaskFilter() taskFilter?: TaskFilterDto,
   ) {
@@ -99,7 +99,7 @@ export class TaskController {
   public async getProjectTask(
     @Param('projectId') spaceId: string,
     @Param('taskId') taskId: string,
-    @ReqUser() payload: Payload,
+    @ReqUser() payload: AuthPayload,
   ) {
     const membership = await this.project.getProjectMember(spaceId, payload.userId);
     const task = await this.db.task.findOne({
@@ -118,7 +118,7 @@ export class TaskController {
   public async getProjectTaskSubTasks(
     @Param('projectId') projectId: string,
     @Param('taskId') taskId: string,
-    @ReqUser() user: Payload,
+    @ReqUser() user: AuthPayload,
   ) {
     await this.project.getProjectMember(projectId, user.userId);
     const tasks = await this.db.task.find({
@@ -170,7 +170,7 @@ export class TaskController {
   public async updateProjectTask(
     @Param('projectId') projectId: string,
     @Param('taskId') taskId: string,
-    @ReqUser() user: Payload,
+    @ReqUser() user: AuthPayload,
     @Body() updateTaskDto: UpdateTaskDto,
   ) {
     const me = await this.project.getProjectMember(projectId, user.userId);
@@ -259,7 +259,7 @@ export class TaskController {
   public async createTaskComment(
     @Param('projectId') projectId: string,
     @Param('taskId') taskId: string,
-    @ReqUser() payload: Payload,
+    @ReqUser() payload: AuthPayload,
     @Body() createCommentDto: CreateTaskCommentDto,
   ) {
     const member = await this.project.getProjectMember(projectId, payload.userId);
@@ -287,7 +287,7 @@ export class TaskController {
   public async getTaskComments(
     @Param('projectId') projectId: string,
     @Param('taskId') taskId: string,
-    @ReqUser() payload: Payload,
+    @ReqUser() payload: AuthPayload,
   ) {
     const member = await this.project.getProjectMember(projectId, payload.userId);
     const task = await this.task.getById(taskId);
@@ -303,7 +303,7 @@ export class TaskController {
   @Post('/')
   public async createProjectTask(
     @Param('projectId') projectId: string,
-    @ReqUser() payload: Payload,
+    @ReqUser() payload: AuthPayload,
     @Body() createTaskDto: CreateTaskDto,
   ) {
     const member = await this.project.getProjectMember(projectId, payload.userId);

@@ -7,7 +7,7 @@ import {
 import { Reflector } from "@nestjs/core";
 import { ProjectService } from "../project.service";
 import { PROJECT_PERMISSIONS_KEY } from "../decorators/project.decorator";
-import { Payload } from "@/modules/auth/dto/auth.dto";
+import { AuthPayload } from "@/modules/auth/dto/auth.dto";
 import { Messages } from "@/base/config";
 import { ProjectRoles } from "@/common/types/project";
 
@@ -30,7 +30,7 @@ export class ProjectPermissionGuard implements CanActivate {
     }
 
     const request = context.switchToHttp().getRequest();
-    const { user }: { user: Payload } = request;
+    const { user }: { user: AuthPayload } = request;
     const { projectId } = request.params;
 
     const member = await this.projectService.getProjectMember(projectId, user.userId);

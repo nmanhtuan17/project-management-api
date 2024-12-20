@@ -1,11 +1,12 @@
 import { HttpStatus, Injectable } from "@nestjs/common";
-import { RegisterDto } from "../auth/dto/auth.dto";
+import { AuthPayload, RegisterDto } from "../auth/dto/auth.dto";
 import { DbService } from "@/base/db/services";
 import { hashSync } from "bcrypt";
 import { SystemRoles } from "@/common/types";
 import { Md5 } from "ts-md5";
 import { ApiError } from "@/common/errors/api.error";
 import { Messages } from "@/base/config";
+import { UpdateProfileDto } from "./dto/user.dto";
 
 @Injectable()
 export class UserService {
@@ -22,7 +23,6 @@ export class UserService {
       fullName,
       password: hashSync(password, 10),
       emailVerified: preVerified,
-      role: SystemRoles.USER,
       avatar: `https://gravatar.com/avatar/${Md5.hashStr(email)}`
     })
   }
@@ -31,5 +31,9 @@ export class UserService {
     return this.db.user.findOne({
       _id: id
     }).select("-password");
+  }
+
+  updateProfile(userId: string, data: UpdateProfileDto) {
+    return this.db.user.findByIdAndUpdate(userId, data)
   }
 }

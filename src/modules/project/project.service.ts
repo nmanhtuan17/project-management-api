@@ -1,7 +1,7 @@
 import { DbService } from "@/base/db/services";
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { CreateColumnDto, CreateProjectDto } from "./dto/project.dto";
-import { Payload } from "../auth/dto/auth.dto";
+import { AuthPayload } from "../auth/dto/auth.dto";
 import { Messages } from "@/base/config";
 import { ProjectRoles } from "@/common/types/project";
 import { randomString, slugify } from "@/common/utils";
