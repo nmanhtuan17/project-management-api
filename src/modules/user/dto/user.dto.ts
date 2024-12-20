@@ -27,5 +27,6 @@ export class ActiveEmailDto {
   @Matches(/^[a-zA-Z0-9_]+$/, {
     message: 'Alias can only contain letters, numbers, and underscores.',
   })
+  @Transform(({value}) => value.toString().toLowerCase())
   alias: string
 }
