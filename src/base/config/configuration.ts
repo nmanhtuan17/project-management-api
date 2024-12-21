@@ -9,6 +9,11 @@ export const configuration = () => ({
       accessKeyId: process.env.S3_ACCESS_KEY_ID,
       secretAccessKey: process.env.S3_SECRET_ACCESS_KEY,
       bucketName: process.env.S3_BUCKET_NAME
+    },
+    cloudinary: {
+      apikey: process.env.CLOUDINARY_API_KEY,
+      apiSecretKey: process.env.CLOUDINARY_API_SECRET,
+      cloudName: process.env.CLOUDINARY_CLOUD_NAME
     }
   },
   auth: {

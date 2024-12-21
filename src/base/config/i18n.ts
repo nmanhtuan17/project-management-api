@@ -48,7 +48,7 @@ export const Messages = {
     memberTitleNotFound: 'MEMBER_TITLE_NOT_FOUND',
     memberTitleDeleted: 'MEMBER_TITLE_DELETED',
     memberTitleUpdated: 'MEMBER_TITLE_UPDATED',
-    profilePictureUpdated: 'PROFILE_PICTURE_UPDATED',
+    profilePictureUpdated: 'PROFILE_AVATAR_UPDATED',
     memberNotFound: 'MEMBER_NOT_FOUND',
   },
   project: {
