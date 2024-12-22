@@ -68,7 +68,7 @@ export class UserController {
     const uploaded = await this.cloudinaryService.uploadImage(file)
     const upadatedUser = await this.db.user.findByIdAndUpdate(user.userId, {
       avatar: uploaded
-    })
+    }, { new: true })
     return {
       data: upadatedUser,
       message: Messages.member.profilePictureUpdated

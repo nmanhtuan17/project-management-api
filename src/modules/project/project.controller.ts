@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpException, HttpStatus, Inject, Param, Post, Put, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, Get, HttpException, HttpStatus, Inject, Param, Post, Put, UploadedFile, UseGuards, UseInterceptors } from "@nestjs/common";
 import { ProjectService } from "./project.service";
 import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 import { ApiBearerAuth } from "@nestjs/swagger";
@@ -9,7 +9,9 @@ import { DbService } from "@/base/db/services";
 import { Messages } from "@/base/config";
 import { ProjectRoles } from "@/common/types/project";
 import { HttpError } from "postmark/dist/client/errors/Errors";
-import { ProjectManagerOrAboveRequired } from "./decorators/project.decorator";
+import { ProjectManagerOrAboveRequired, ProjectOwnerRequired } from "./decorators/project.decorator";
+import { FileInterceptor } from "@nestjs/platform-express";
+import { StorageService } from "@/base/services";
 
 @Controller('projects')
 @ApiBearerAuth()
@@ -17,7 +19,8 @@ import { ProjectManagerOrAboveRequired } from "./decorators/project.decorator";
 export class ProjectController {
   constructor(
     private project: ProjectService,
-    private db: DbService
+    private db: DbService,
+    private storageService: StorageService
   ) {
   }
 
@@ -118,4 +121,19 @@ export class ProjectController {
     }
   }
 
+  @Post('/:projectId/avatar')
+  @ProjectOwnerRequired()
+  @UseInterceptors(FileInterceptor('avatar'))
+  async updateProjectAvatar(
+    @Param('projectId') projectId: string,
+    @UploadedFile() file: Express.Multer.File
+  ) {
+    const { url } = await this.storageService.uploadAttachmentFile(projectId, file)
+    const projectUpdated = await this.project.updateProjectAvatar(projectId, url)
+
+    return {
+      data: projectUpdated,
+      message: Messages.project.projectUpdated
+    }
+  }
 }

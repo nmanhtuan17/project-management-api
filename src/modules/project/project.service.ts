@@ -87,6 +87,10 @@ export class ProjectService {
     })
   }
 
+  async updateProjectAvatar(projectId: string, avatar: string) {
+    return await this.db.project.findByIdAndUpdate(projectId, { avatar }, { new: true })
+  }
+
   async createBoard(projectId: string) {
     const newColumn = await this.db.column.create({
       id: 'new',
@@ -107,23 +111,23 @@ export class ProjectService {
     })
 
     const update = await this.db.projectBoard.findOneAndUpdate(
-      {project: projectId}, 
-      {$push: {columns: newColumn._id.toString()}},
-      {new: true}
+      { project: projectId },
+      { $push: { columns: newColumn._id.toString() } },
+      { new: true }
     )
     return update
   }
 
   async updateColumn(columnId: string, payload: CreateColumnDto) {
     const column = await this.db.column.findOneAndUpdate(
-      {_id: columnId},
+      { _id: columnId },
       payload,
-      {new: true}
+      { new: true }
     )
     return column
   }
 
   async deleteColumn(columnId: string) {
-    return await this.db.column.deleteOne({_id: columnId})
+    return await this.db.column.deleteOne({ _id: columnId })
   }
 }

@@ -5,6 +5,7 @@ import { DbService } from "@/base/db/services";
 import { ProjectController } from "./project.controller";
 import { ProjectMemberController } from "./project-member.controller";
 import { MailModule } from "../mail/mail.module";
+import { StorageService } from "@/base/services";
 
 @Module({
   imports: [
@@ -12,7 +13,8 @@ import { MailModule } from "../mail/mail.module";
     MailModule
   ],
   providers: [
-    ProjectService
+    ProjectService,
+    StorageService
   ],
   controllers: [ProjectController, ProjectMemberController],
   exports: [ProjectService]
