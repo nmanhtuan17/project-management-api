@@ -51,8 +51,9 @@ export class UserController {
     if (!!user.internalEmail) throw new HttpException(Messages.common.actionNotPermitted, HttpStatus.NOT_ACCEPTABLE)
     const internalEmail = `${activeMailDto.alias}@${this.config.get('mail.domain')}`
     const updated = await this.db.user.findByIdAndUpdate(authPayload.userId, {
-      internalEmail
-    })
+      internalEmail,
+      alias: activeMailDto.alias
+    }, { new: true })
     return {
       data: updated,
       message: Messages.member.emailAddressCreated

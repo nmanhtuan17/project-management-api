@@ -36,6 +36,12 @@ export class User {
   internalEmail?: string;
 
   @ApiProperty()
+  @Prop({
+    type: String
+  })
+  alias?: string;
+
+  @ApiProperty()
   @Prop()
   emailVerified: boolean;
 
