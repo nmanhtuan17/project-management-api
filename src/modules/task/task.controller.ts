@@ -237,8 +237,9 @@ export class TaskController {
       if (counted !== updateTaskDto.assignees.length) throw new HttpException(Messages.task.invalidAssignee, HttpStatus.BAD_REQUEST);
     }
     Object.assign(task, updateTaskDto);
-    await task.save();
-    let signAttachments = await (await task.populate('attachments'))
+    // await task.save();
+    const updatededTask = await this.db.task.findByIdAndUpdate(task._id, task, { new: true })
+    let signAttachments = await (await updatededTask.populate('attachments'))
       .populate({
         path: 'assignees',
         populate: 'user'
