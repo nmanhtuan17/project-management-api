@@ -16,8 +16,9 @@ export class ProjectService {
 
   }
 
-  async getAll() {
-    return this.db.project.getAll()
+  async getAll(user: AuthPayload) {
+    const projectMembers = await this.db.projectMember.find({ user: user.userId }).populate('project')
+    return projectMembers.map(mem => mem.project)
   }
 
   async getProject(projectId: string) {

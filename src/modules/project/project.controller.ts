@@ -25,8 +25,10 @@ export class ProjectController {
   }
 
   @Get('/')
-  async getProjects() {
-    return await this.project.getAll()
+  async getProjects(
+    @ReqUser() user: AuthPayload
+  ) {
+    return await this.project.getAll(user)
   }
   @Get('/:projectId')
   async getProject(
