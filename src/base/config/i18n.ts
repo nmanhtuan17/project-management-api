@@ -32,7 +32,8 @@ export const Messages = {
     invalidAttachments: 'INVALID_ATTACHMENTS',
     invalidId: 'INVALID_ID',
     invalidMember: 'INVALID_MEMBER',
-    emailActived: 'INTERNAL_EMAIL_ALREADY_ACTIVE'
+    emailActived: 'INTERNAL_EMAIL_ALREADY_ACTIVE',
+    updated: 'UPDATED'
   },
   member: {
     emailAliasTooShort: 'EMAIL_ALIAS_TOO_SHORT',

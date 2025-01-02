@@ -38,7 +38,8 @@ export class UserController {
     @Body() updateProfileDto: UpdateProfileDto
   ) {
     return {
-      data: await this.user.updateProfile(user.userId, updateProfileDto)
+      data: await this.user.updateProfile(user.userId, updateProfileDto),
+      message: Messages.common.updated
     }
   }
 

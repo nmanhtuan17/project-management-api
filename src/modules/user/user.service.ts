@@ -39,6 +39,6 @@ export class UserService {
   }
 
   updateProfile(userId: string, data: UpdateProfileDto) {
-    return this.db.user.findByIdAndUpdate(userId, data)
+    return this.db.user.findByIdAndUpdate(userId, data, { new: true }).select('-password')
   }
 }
