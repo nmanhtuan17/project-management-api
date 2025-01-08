@@ -33,7 +33,7 @@ export const Messages = {
     invalidId: 'INVALID_ID',
     invalidMember: 'INVALID_MEMBER',
     emailActived: 'INTERNAL_EMAIL_ALREADY_ACTIVE',
-    updated: 'UPDATED'
+    updated: 'UPDATED',
   },
   member: {
     emailAliasTooShort: 'EMAIL_ALIAS_TOO_SHORT',
@@ -84,6 +84,7 @@ export const Messages = {
     userIsNotOwner :"USER_IS_NOT_THIS_OWNER",
     invalidTitle: 'INVALID_TITLE',
     titleCreated: 'TITLE_CREATED',
+    labelExist: 'LABEL_EXIST'
   },
   group: {
     memberNotFound: 'MEMBER_NOT_FOUND',

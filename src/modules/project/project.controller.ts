@@ -4,7 +4,7 @@ import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 import { ApiBearerAuth } from "@nestjs/swagger";
 import { ReqUser } from "@/common/decorators/req-user.decorator";
 import { AuthPayload } from "../auth/dto/auth.dto";
-import { CreateColumnDto, CreateProjectDto, VerifySlugDto } from "./dto/project.dto";
+import { CreateColumnDto, CreateLabelDto, CreateProjectDto, VerifySlugDto } from "./dto/project.dto";
 import { DbService } from "@/base/db/services";
 import { Messages } from "@/base/config";
 import { ProjectRoles } from "@/common/types/project";
@@ -136,6 +136,30 @@ export class ProjectController {
     return {
       data: projectUpdated,
       message: Messages.project.projectUpdated
+    }
+  }
+
+  @Get('/:projectId/labels')
+  async getProjectlabels (
+    @Param('projectId') projectId: string
+  ) {
+    return {
+      data: await this.db.projectLabel.find({projectId}),
+      message: ''
+    }
+  }
+
+  @Post('/:projectId/label')
+  @ProjectManagerOrAboveRequired()
+  async createProjectLabel(
+    @Param('projectId') projectId: string,
+    @Body() payload: CreateLabelDto
+  ){
+    const existing = await this.db.projectLabel.findOne({projectId, title: payload.title})
+    if(existing) throw new HttpException(Messages.project.labelExist, HttpStatus.BAD_REQUEST)
+    return {
+      data: await this.project.createLabel(projectId, payload),
+      message: Messages.common.updated
     }
   }
 }

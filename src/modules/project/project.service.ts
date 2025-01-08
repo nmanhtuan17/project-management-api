@@ -1,6 +1,6 @@
 import { DbService } from "@/base/db/services";
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
-import { CreateColumnDto, CreateProjectDto } from "./dto/project.dto";
+import { CreateColumnDto, CreateLabelDto, CreateProjectDto } from "./dto/project.dto";
 import { AuthPayload } from "../auth/dto/auth.dto";
 import { Messages } from "@/base/config";
 import { ProjectRoles } from "@/common/types/project";
@@ -41,7 +41,6 @@ export class ProjectService {
       membersLimit: 50
     })
 
-    console.log(project)
     return project
   }
 
@@ -130,5 +129,12 @@ export class ProjectService {
 
   async deleteColumn(columnId: string) {
     return await this.db.column.deleteOne({ _id: columnId })
+  }
+
+  async createLabel(projectId: string, payload: CreateLabelDto) {
+    return await this.db.projectLabel.create({
+      ...payload, 
+      projectId
+    })
   }
 }
