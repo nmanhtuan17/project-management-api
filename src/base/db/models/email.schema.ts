@@ -50,19 +50,19 @@ export class Email {
   From: string;
 
   @Prop({
-    type: [String],
+    type: String,
   })
   To: string;
 
   @Prop({
-    type: [String],
+    type: String,
   })
-  Cc?: string[];
+  Cc?: string;
 
   @Prop({
-    type: [String],
+    type: String,
   })
-  Bcc?: string[];
+  Bcc?: string;
 
   @Prop({
     type: String,
@@ -70,7 +70,7 @@ export class Email {
   Sender: string;
 
   @Prop({
-    type: [String],
+    type: String,
   })
   OriginalRecipient: string;
 
@@ -92,12 +92,12 @@ export class Email {
   @Prop({
     type: String,
   })
-  strippedText: string;
+  StrippedTextReply: string;
 
   @Prop({
     type: String,
   })
-  replyTo?: string;
+  ReplyTo?: string;
 
   @Prop({
     type: Boolean,

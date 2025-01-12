@@ -15,8 +15,8 @@ export class MailController {
     if (payload.Attachments) {
 
     }
-    await this.db.email.create(mail)
-    console.log(payload)
+    await this.db.email.create({ ...mail })
+    console.log(mail)
     return {
       data: payload
     }
