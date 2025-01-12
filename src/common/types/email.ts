@@ -1,6 +1,6 @@
 export enum EmailType {
-  Outgoing = 'outgoing',
-  Incoming = 'incoming'
+  Inbound = 'inbound',
+  Outbound = 'outbound'
 }
 
 export enum EmailAddressType {

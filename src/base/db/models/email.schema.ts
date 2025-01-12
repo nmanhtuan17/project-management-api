@@ -24,60 +24,75 @@ export class Email {
   labels?: string[]
 
   @Prop({
+    type: String
+  })
+  Tag?: string
+
+  @Prop({
     type: String,
     enum: Object.values(EmailType),
   })
-  type: EmailType;
+  MessageStream: EmailType;
 
   @Prop({
     type: String,
   })
-  messageId: string;
+  MessageId: string;
 
   @Prop({
     type: String,
   })
-  from: string;
+  FromName: string;
+
+  @Prop({
+    type: String,
+  })
+  From: string;
 
   @Prop({
     type: [String],
   })
-  to: string;
+  To: string;
 
   @Prop({
     type: [String],
   })
-  cc?: string[];
+  Cc?: string[];
 
   @Prop({
     type: [String],
   })
-  bcc?: string[];
+  Bcc?: string[];
 
   @Prop({
     type: String,
   })
-  sender: string;
+  Sender: string;
 
   @Prop({
     type: [String],
   })
-  recipient: string;
+  OriginalRecipient: string;
 
   @Prop({
     type: String,
   })
-  subject: string;
+  Subject: string;
 
   @Prop({
     type: String,
   })
-  body: string;
+  TextBody: string;
+
+  @Prop({
+    type: String,
+  })
+  HtmlBody: string;
 
   @Prop({
     type: [String]
   })
-  headers: string[];
+  Headers: string[];
 
   @Prop({
     type: String,
@@ -130,7 +145,12 @@ export class Email {
     }],
     default: [],
   })
-  attachments?: EmailAttachment[] | string[];
+  Attachments?: EmailAttachment[] | string[];
+
+  @Prop({
+    type: String
+  })
+  Date: string
 
   createdAt?: Date;
 }
