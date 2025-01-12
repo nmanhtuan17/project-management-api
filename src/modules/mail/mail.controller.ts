@@ -11,7 +11,7 @@ export class MailController {
   async receiveEmail(
     @Body() payload: any
   ) {
-    let { Attachments, mail } = payload
+    let { Attachments, ...mail } = payload
     if (payload.Attachments) {
 
     }
