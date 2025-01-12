@@ -5,13 +5,17 @@ import { Body, Controller, Post, Request } from "@nestjs/common";
 export class MailController {
   constructor(
     private db: DbService
-  ) {}
+  ) { }
 
   @Post('/postmark-webhook')
-  async receiveEmail (
+  async receiveEmail(
     @Body() payload: any
   ) {
-    await this.db.email.create(payload)
+    let { Attachments, mail } = payload
+    if (payload.Attachments) {
+
+    }
+    await this.db.email.create({ ...mail, Attachments: [''] })
     console.log(payload)
     return {
       data: payload

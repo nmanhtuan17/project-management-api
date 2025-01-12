@@ -90,11 +90,6 @@ export class Email {
   HtmlBody: string;
 
   @Prop({
-    type: [String]
-  })
-  Headers: string[];
-
-  @Prop({
     type: String,
   })
   strippedText: string;
