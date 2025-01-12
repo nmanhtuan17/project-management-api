@@ -1,6 +1,6 @@
 import { DbService } from "@/base/db/services";
 import { Body, Controller, Get, HttpException, HttpStatus, Param, Post, Query, UseGuards } from "@nestjs/common";
-import { ApiBearerAuth } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 import { ProjectService } from "./project.service";
 import { ReqUser } from "@/common/decorators/req-user.decorator";
@@ -13,6 +13,7 @@ import { MailService } from "../mail/mail.service";
 import { randomString } from "@/common/utils";
 
 @Controller("projects/:projectId/members")
+@ApiTags('project')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
 export class ProjectMemberController {
