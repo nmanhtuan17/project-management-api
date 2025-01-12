@@ -4,6 +4,7 @@ import { ApiProperty } from "@nestjs/swagger";
 import { EmailAttachment } from "./email-attachment.schema";
 import { ProjectMember } from './project-member.schema';
 import { EmailType } from '@/common/types';
+import { User } from '@/base/db/models';
 
 @Schema({
   timestamps: true,
@@ -13,9 +14,10 @@ export class Email {
   _id: mongoose.Schema.Types.ObjectId;
 
   @Prop({
-    type: mongoose.Schema.Types.ObjectId
+    type: mongoose.Schema.Types.ObjectId,
+    ref: User.name
   })
-  owner: mongoose.Schema.Types.ObjectId | string;
+  owner: User | string;
 
   @Prop({
     type: [String],
