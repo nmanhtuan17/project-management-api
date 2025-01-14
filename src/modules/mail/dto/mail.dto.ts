@@ -1,6 +1,8 @@
+import { Messages } from "@/base/config";
 import { EmailType } from "@/common/types";
 import { ApiProperty } from "@nestjs/swagger";
-import { IsOptional, IsString } from "class-validator";
+import { Transform } from "class-transformer";
+import { IsEmail, IsNotEmpty, IsOptional, IsString } from "class-validator";
 
 export class ReceiveEmailDto {
   @ApiProperty({})
@@ -41,4 +43,46 @@ export class ReceiveEmailDto {
   Attachments?: any
 
 
+}
+
+
+export class SendMailDto {
+  @ApiProperty({
+    default: "example@gmail.com"
+  })
+  @IsEmail({}, {
+    message: Messages.common.invalidEmail
+  })
+  @Transform(({ value }) => value.toString().toLowerCase())
+  To: string
+
+  @ApiProperty({
+    default: "example@gmail.com"
+  })
+  @IsEmail({}, {
+    message: Messages.common.invalidEmail
+  })
+  @Transform(({ value }) => value.toString().toLowerCase())
+  Cc: string
+
+  @ApiProperty({
+    default: "example@gmail.com"
+  })
+  @IsEmail({}, {
+    message: Messages.common.invalidEmail
+  })
+  @Transform(({ value }) => value.toString().toLowerCase())
+  Bcc: string
+
+  @ApiProperty({
+    default: 'this is subject'
+  })
+  @IsNotEmpty()
+  Subject: string
+
+  @ApiProperty({
+    default: '<p>This is body</p>'
+  })
+  @IsNotEmpty()
+  HtmlBody: string  
 }

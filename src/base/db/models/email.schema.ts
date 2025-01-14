@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 import { ApiProperty } from "@nestjs/swagger";
 import { EmailAttachment } from "./email-attachment.schema";
 import { ProjectMember } from './project-member.schema';
-import { EmailType } from '@/common/types';
+import { EmailFull, EmailType } from '@/common/types';
 import { User } from '@/base/db/models';
 
 @Schema({
@@ -52,9 +52,27 @@ export class Email {
   From: string;
 
   @Prop({
+    type: {
+      Email: { type: String, required: true },
+      Name: { type: String, default: '' },
+      MailboxHash: { type: String, default: '' }
+    }
+  })
+  FromFull: EmailFull
+
+  @Prop({
     type: String,
   })
   To: string;
+
+  @Prop({
+    type: [{
+      Email: { type: String, required: true },
+      Name: { type: String, default: '' },
+      MailboxHash: { type: String, default: '' }
+    }]
+  })
+  ToFull: EmailFull[]
 
   @Prop({
     type: String,
@@ -62,9 +80,27 @@ export class Email {
   Cc?: string;
 
   @Prop({
+    type: [{
+      Email: { type: String, required: true },
+      Name: { type: String, default: '' },
+      MailboxHash: { type: String, default: '' }
+    }]
+  })
+  CcFull?: EmailFull[]
+
+  @Prop({
     type: String,
   })
   Bcc?: string;
+
+  @Prop({
+    type: [{
+      Email: { type: String, required: true },
+      Name: { type: String, default: '' },
+      MailboxHash: { type: String, default: '' }
+    }]
+  })
+  BccFull: EmailFull[]
 
   @Prop({
     type: String,

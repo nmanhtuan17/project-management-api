@@ -22,3 +22,9 @@ export interface StoredEmailAttachment {
   size: number;
   cid: string;
 }
+
+export interface EmailFull {
+  Email: string
+  Name: string
+  MailboxHash: string
+}

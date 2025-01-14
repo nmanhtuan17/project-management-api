@@ -7,6 +7,7 @@ import * as path from "node:path";
 import { ServerClient, Message } from "postmark";
 import { ProjectInvitation } from "@/base/db/models/project-invitation.schema";
 import { AuthPayload } from "../auth/dto/auth.dto";
+import { Callback, InboundMessageDetails, InboundMessages, InboundMessagesFilteringParameters, OutboundMessageDetails, OutboundMessages, OutboundMessagesFilteringParameters } from "postmark/dist/client/models";
 
 @Injectable()
 export class MailService {
@@ -77,6 +78,22 @@ export class MailService {
   async sendEmail(data: Message) {
     const res = await this.client.sendEmail(data);
     return res
+  }
+
+  async getOutboundMessages(filter?: OutboundMessagesFilteringParameters, callback?: Callback<OutboundMessages>): Promise<OutboundMessages> {
+    return await this.client.getOutboundMessages(filter, callback)
+  }
+
+  async getInboundMessages(filter?: InboundMessagesFilteringParameters, callback?: Callback<InboundMessages>): Promise<InboundMessages> {
+    return await this.client.getInboundMessages(filter, callback)
+  }
+
+  async getInboundMessageDetails(messageId: string, callback?: Callback<InboundMessageDetails>): Promise<InboundMessageDetails> {
+    return await this.client.getInboundMessageDetails(messageId, callback)
+  }
+
+  async getOutboundMessageDetails(messageId: string, callback?: Callback<OutboundMessageDetails>): Promise<OutboundMessageDetails> {
+    return await this.client.getOutboundMessageDetails(messageId, callback)
   }
 
   private async renderEmail<T>(templateName: string, data: T) {
