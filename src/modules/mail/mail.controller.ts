@@ -80,8 +80,12 @@ export class MailController {
     @ReqUser() user: AuthPayload
   ) {
     const sender = await this.db.user.getById(user.userId)
+    const res = await this.mailService.getOutboundMessages({ fromEmail: sender.internalEmail })
     return {
-      data: await this.mailService.getOutboundMessages({ fromEmail: sender.internalEmail })
+      data: {
+        total: res.TotalCount,
+        messages: res.Messages
+      }
     }
   }
 
@@ -99,8 +103,12 @@ export class MailController {
     @ReqUser() user: AuthPayload
   ) {
     const sender = await this.db.user.getById(user.userId)
+    const res = await this.mailService.getInboundMessages({ recipient: sender.internalEmail })
     return {
-      data: await this.mailService.getInboundMessages()
+      data: {
+        total: res.TotalCount,
+        messages: res.InboundMessages
+      }
     }
   }
 
