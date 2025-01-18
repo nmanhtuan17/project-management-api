@@ -76,8 +76,7 @@ export class MailService {
   }
 
   async sendEmail(data: Message) {
-    const res = await this.client.sendEmail(data);
-    return res
+    return await this.client.sendEmail(data);
   }
 
   async getOutboundMessages(filter?: OutboundMessagesFilteringParameters, callback?: Callback<OutboundMessages>): Promise<OutboundMessages> {

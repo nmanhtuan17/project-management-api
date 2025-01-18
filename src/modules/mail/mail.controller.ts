@@ -55,19 +55,10 @@ export class MailController {
   @UseGuards(JwtAuthGuard)
   async sendEmail(
     @ReqUser() user: AuthPayload,
-    @Body() data: Message
+    @Body() data: SendMailDto
   ) {
     const sender = await this.db.user.getById(user.userId)
-    const res = await this.mailService.sendEmail({
-      ...data,
-      From: sender.internalEmail,
-      To: data.To,
-      Subject: data.Subject,
-      HtmlBody: data.HtmlBody
-    })
-
-    console.log(res)
-
+    const res = await this.mailService.sendEmail(data)
     return {
       data: res,
       message: res.Message

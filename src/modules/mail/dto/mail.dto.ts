@@ -3,6 +3,7 @@ import { EmailType } from "@/common/types";
 import { ApiProperty } from "@nestjs/swagger";
 import { Transform } from "class-transformer";
 import { IsEmail, IsNotEmpty, IsOptional, IsString } from "class-validator";
+import { Message } from "postmark";
 
 export class ReceiveEmailDto {
   @ApiProperty({})
@@ -46,7 +47,7 @@ export class ReceiveEmailDto {
 }
 
 
-export class SendMailDto {
+export class SendMailDto extends Message {
   @ApiProperty({
     default: "example@gmail.com"
   })
@@ -54,25 +55,30 @@ export class SendMailDto {
     message: Messages.common.invalidEmail
   })
   @Transform(({ value }) => value.toString().toLowerCase())
+  From: string
+
+  @ApiProperty({
+    default: "example@gmail.com"
+  })
   To: string
 
   @ApiProperty({
     default: "example@gmail.com"
   })
-  @IsEmail({}, {
-    message: Messages.common.invalidEmail
-  })
-  @Transform(({ value }) => value.toString().toLowerCase())
-  Cc: string
+  @IsOptional()
+  Cc?: string
 
   @ApiProperty({
     default: "example@gmail.com"
   })
-  @IsEmail({}, {
-    message: Messages.common.invalidEmail
+  @IsOptional()
+  Bcc?: string
+
+  @ApiProperty({
+    default: "example@gmail.com"
   })
-  @Transform(({ value }) => value.toString().toLowerCase())
-  Bcc: string
+  @IsOptional()
+  ReplyTo?: string;
 
   @ApiProperty({
     default: 'this is subject'
@@ -84,5 +90,5 @@ export class SendMailDto {
     default: '<p>This is body</p>'
   })
   @IsNotEmpty()
-  HtmlBody: string  
+  HtmlBody: string
 }
