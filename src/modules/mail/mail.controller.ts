@@ -12,7 +12,6 @@ import { Message } from "postmark";
 @Controller("mails")
 @ApiTags('mail')
 @ApiBearerAuth()
-@UseGuards(JwtAuthGuard)
 export class MailController {
   constructor(
     private db: DbService,
@@ -20,7 +19,6 @@ export class MailController {
   ) { }
 
   @Post('/postmark-inbound')
-  @UseGuards()
   async receiveEmail(
     @Body() payload: any
   ) {
@@ -31,7 +29,6 @@ export class MailController {
   }
 
   @Post('/postmark-outbound')
-  @UseGuards()
   async outboundEmail(
     @Body() payload: any
   ) {
@@ -43,6 +40,7 @@ export class MailController {
   }
 
   @Get('')
+  @UseGuards(JwtAuthGuard)
   async getEmails(
     @ReqUser() user: AuthPayload
   ) {
@@ -54,6 +52,7 @@ export class MailController {
   }
 
   @Post('send')
+  @UseGuards(JwtAuthGuard)
   async sendEmail(
     @ReqUser() user: AuthPayload,
     @Body() data: Message
@@ -76,6 +75,7 @@ export class MailController {
   }
 
   @Get('outbounds')
+  @UseGuards(JwtAuthGuard)
   async getOutboundMessages(
     @ReqUser() user: AuthPayload
   ) {
@@ -89,7 +89,8 @@ export class MailController {
     }
   }
 
-  @Get('outbound/:messageId')
+  @Get('outbounds/:messageId')
+  @UseGuards(JwtAuthGuard)
   async getOutboundMessageDetails(
     @Param('messageId') messageId: string
   ) {
@@ -99,6 +100,7 @@ export class MailController {
   }
 
   @Get('inbounds')
+  @UseGuards(JwtAuthGuard)
   async getInboundMessages(
     @ReqUser() user: AuthPayload
   ) {
@@ -112,7 +114,8 @@ export class MailController {
     }
   }
 
-  @Get('inbound/:messageId')
+  @Get('inbounds/:messageId')
+  @UseGuards(JwtAuthGuard)
   async getInboundMessageDetails(
     @Param('messageId') messageId: string
   ) {
