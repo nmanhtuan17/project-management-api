@@ -1,13 +1,13 @@
 import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { Project, ProjectMember, User } from "@/base/db";
-import Handlebars from "handlebars";
+import Handlebars, { template } from "handlebars";
 import { readFile } from "fs/promises";
 import * as path from "node:path";
 import { ServerClient, Message } from "postmark";
 import { ProjectInvitation } from "@/base/db/models/project-invitation.schema";
 import { AuthPayload } from "../auth/dto/auth.dto";
-import { Callback, InboundMessageDetails, InboundMessages, InboundMessagesFilteringParameters, OutboundMessageDetails, OutboundMessages, OutboundMessagesFilteringParameters } from "postmark/dist/client/models";
+import { Callback, InboundMessageDetails, InboundMessages, InboundMessagesFilteringParameters, OutboundMessageDetails, OutboundMessages, OutboundMessagesFilteringParameters, TemplatedMessage } from "postmark/dist/client/models";
 
 @Injectable()
 export class MailService {
@@ -63,20 +63,26 @@ export class MailService {
     const origin = this.config.get('webDomain');
     this.emailDomain = this.config.get('mail.domain');
     const link = `${origin}/projects/${project._id}/members/join?code=${invitation.code}`
-    return this.sendEmail({
+    return this.sendEmailWithTemplate({
       To: user.internalEmail,
       From: `noreply@${this.emailDomain}`,
-      Subject: 'Invitation to project',
-      HtmlBody: await this.renderEmail('project/invitation', {
-        title: 'Invitation to project',
-        link,
-        fullName: user.fullName,
-      }),
+      TemplateAlias: "user-invitation",
+      TemplateModel: {
+        product_url: project.name,
+        product_name: project.name,
+        name: user.fullName,
+        invite_sender_name: owner.fullName,
+        action_url: link,
+      }
     })
   }
 
   async sendEmail(data: Message) {
     return await this.client.sendEmail(data);
+  }
+
+  async sendEmailWithTemplate(template: TemplatedMessage) {
+    return await this.client.sendEmailWithTemplate(template)
   }
 
   async getOutboundMessages(filter?: OutboundMessagesFilteringParameters, callback?: Callback<OutboundMessages>): Promise<OutboundMessages> {
