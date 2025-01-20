@@ -74,6 +74,7 @@ export class ProjectMemberController {
       project: projectId,
       code
     })
+    if (!invitation) throw new HttpException(Messages.project.invalidCode, HttpStatus.NOT_FOUND)
     await this.project.addMember(projectId, invitation.user.toString(), ProjectRoles.MEMBER)
     return {
       message: Messages.project.joinedProject,
