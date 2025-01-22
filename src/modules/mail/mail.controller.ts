@@ -2,12 +2,14 @@ import { DbService } from "@/base/db/services";
 import { ReqUser } from "@/common/decorators/req-user.decorator";
 import { AuthPayload } from "@/modules/auth/dto/auth.dto";
 import { JwtAuthGuard } from "@/modules/auth/guards/jwt-auth.guard";
-import { Body, Controller, Get, HttpException, HttpStatus, Param, Post, Request, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get, HttpException, HttpStatus, Param, Post, Request, UploadedFile, UploadedFiles, UseGuards, UseInterceptors } from "@nestjs/common";
 import { MailService } from "./mail.service";
 import { Messages } from "@/base/config";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { SendMailDto } from "./dto/mail.dto";
-import { Message } from "postmark";
+import { Attachment, Message } from "postmark";
+import { FileInterceptor, FilesInterceptor } from "@nestjs/platform-express";
+import { StorageService } from "@/base/services";
 
 @Controller("mails")
 @ApiTags('mail')
@@ -15,7 +17,8 @@ import { Message } from "postmark";
 export class MailController {
   constructor(
     private db: DbService,
-    private mailService: MailService
+    private mailService: MailService,
+    private storage: StorageService
   ) { }
 
   @Post('/postmark-inbound')
@@ -52,16 +55,36 @@ export class MailController {
   }
 
   @Post('send')
+  @UseInterceptors(FilesInterceptor('files'))
   @UseGuards(JwtAuthGuard)
   async sendEmail(
     @ReqUser() user: AuthPayload,
-    @Body() data: SendMailDto
+    @Body() data: SendMailDto,
+    @UploadedFiles() files: Express.Multer.File[]
   ) {
-    const sender = await this.db.user.getById(user.userId)
-    const res = await this.mailService.sendEmail(data)
-    return {
-      data: res,
-      message: res.Message
+
+    try {
+      let attachments = []
+      if (files) {
+        attachments = files.map((file) => ({
+          Content: file.buffer.toString('base64'),
+          Name: file.originalname,
+          ContentType: file.mimetype,
+          ContentID: `cid:${file.originalname}`
+        }));
+      }
+      const res = await this.mailService.sendEmail({
+        ...data,
+        Attachments: attachments
+      })
+
+      return {
+        data: res,
+        message: res.Message
+      }
+    } catch (error) {
+      console.log(error)
+      throw new HttpException('Send email failed', HttpStatus.INTERNAL_SERVER_ERROR)
     }
   }
 
