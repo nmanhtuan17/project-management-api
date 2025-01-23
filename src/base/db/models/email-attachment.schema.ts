@@ -32,7 +32,7 @@ export class EmailAttachment {
   @Prop({
     type: String,
   })
-  cid: string;
+  messageID: string;
 
   @Prop({
     type: String,

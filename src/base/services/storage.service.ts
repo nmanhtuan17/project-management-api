@@ -6,7 +6,7 @@ import { HydratedDocument } from "mongoose";
 import { DbService } from "../db/services/db.service";
 import { randomString } from "@/common/utils";
 import { ProjectAttachment, ProjectAttachmentWithDownloadUrl, Task } from "../db";
-import { S3Client, PutObjectCommand, GetObjectCommand } from '@aws-sdk/client-s3'
+import { S3Client, PutObjectCommand, GetObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3'
 
 @Injectable()
 export class StorageService {
@@ -29,12 +29,12 @@ export class StorageService {
     this.s3Region = this.config.get("storage.s3.region")
   }
 
-  // async deleteFile(fileKey: string) {
-  //   return this.s3.deleteObject({
-  //     Bucket: this.s3Bucket,
-  //     Key: fileKey
-  //   }).promise();
-  // }
+  async deleteFile(bucket: string, key: string) {
+    return this.s3.send(new DeleteObjectCommand({
+      Bucket: bucket,
+      Key: key
+    }))
+  }
 
   async uploadAttachmentFile(projectId: string, file: Express.Multer.File) {
     const timestamp = new Date().getTime();
@@ -50,33 +50,26 @@ export class StorageService {
     return { url: `https://${this.s3Bucket}.s3.${this.s3Region}.amazonaws.com/${key}` }
   }
 
-  // async uploadEmailAttachment(contentType: string, fileName: string, cid: string, size: number, attachmentUrl: string) {
-  //   const response = await axios.get(attachmentUrl, {
-  //     responseType: "arraybuffer",
-  //     auth: {
-  //       username: "api",
-  //       password: this.config.get("mail.mailgunKey")
-  //     }
-  //   });
-  //   const buffer = Buffer.from(response.data, "binary");
-  //   const storageKey = `emails/attachments/${cid}_${randomString(10)}_${fileName}`;
-  //   const newUpload = await this.s3.upload({
-  //     Bucket: this.s3Bucket,
-  //     Key: storageKey,
-  //     Body: buffer,
-  //     ACL: "private",
-  //     ContentType: contentType
-  //   }).promise();
+  async uploadEmailAttachment(file: Express.Multer.File, messageID: string) {
+    const storageKey = `emails/attachments/${messageID}_${file.originalname}`;
+    await this.s3.send(
+      new PutObjectCommand({
+        Bucket: this.s3Bucket,
+        Key: storageKey,
+        Body: file.buffer,
+        ACL: "public-read",
+        ContentType: file.mimetype
+      }))
 
-  //   return this.db.emailAttachment.create({
-  //     contentType,
-  //     name: fileName,
-  //     url: newUpload.Location,
-  //     size,
-  //     cid,
-  //     storageKey
-  //   });
-  // }
+    return await this.db.emailAttachment.create({
+      contentType: file.mimetype,
+      name: file.originalname,
+      url: `https://${this.s3Bucket}.s3.${this.s3Region}.amazonaws.com/${storageKey}`,
+      size: file.size,
+      messageID,
+      storageKey
+    });
+  }
 
   // async uploadEmailAttachmentBuffer(contentType: string, fileName: string, cid: string, size: number, attachment: Buffer) {
   //   const storageKey = `emails/attachments/${cid}_${randomString(10)}_${fileName}`;

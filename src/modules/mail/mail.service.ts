@@ -77,8 +77,17 @@ export class MailService {
     })
   }
 
-  async sendEmail(data: Message) {
-    return await this.client.sendEmail(data);
+  async sendEmail(data: Message, files?: Express.Multer.File[]) {
+    let attachments = []
+    if (files) {
+      attachments = files.map((file) => ({
+        Content: file.buffer.toString('base64'),
+        Name: file.originalname,
+        ContentType: file.mimetype,
+        ContentID: `cid:${file.originalname}`
+      }));
+    }
+    return await this.client.sendEmail({ ...data, Attachments: attachments });
   }
 
   async sendEmailWithTemplate(template: TemplatedMessage) {

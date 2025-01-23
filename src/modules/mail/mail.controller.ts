@@ -10,6 +10,7 @@ import { SendMailDto } from "./dto/mail.dto";
 import { Attachment, Message } from "postmark";
 import { FileInterceptor, FilesInterceptor } from "@nestjs/platform-express";
 import { StorageService } from "@/base/services";
+import { file } from "googleapis/build/src/apis/file";
 
 @Controller("mails")
 @ApiTags('mail')
@@ -62,22 +63,9 @@ export class MailController {
     @Body() data: SendMailDto,
     @UploadedFiles() files: Express.Multer.File[]
   ) {
-
     try {
-      let attachments = []
-      if (files) {
-        attachments = files.map((file) => ({
-          Content: file.buffer.toString('base64'),
-          Name: file.originalname,
-          ContentType: file.mimetype,
-          ContentID: `cid:${file.originalname}`
-        }));
-      }
-      const res = await this.mailService.sendEmail({
-        ...data,
-        Attachments: attachments
-      })
-
+      const res = await this.mailService.sendEmail(data, files)
+      const attachments = await Promise.all(files.map(file => this.storage.uploadEmailAttachment(file, res.MessageID)))
       return {
         data: res,
         message: res.Message
@@ -108,8 +96,13 @@ export class MailController {
   async getOutboundMessageDetails(
     @Param('messageId') messageId: string
   ) {
+    const attachments = await this.db.emailAttachment.find({ messageID: messageId })
+    const message = await this.mailService.getOutboundMessageDetails(messageId)
     return {
-      data: await this.mailService.getOutboundMessageDetails(messageId)
+      data: {
+        ...message,
+        Attachments: attachments
+      }
     }
   }
 
@@ -133,10 +126,14 @@ export class MailController {
   async getInboundMessageDetails(
     @Param('messageId') messageId: string
   ) {
+    const attachments = await this.db.emailAttachment.find({ messageID: messageId })
+    const message = await this.mailService.getInboundMessageDetails(messageId)
     return {
-      data: await this.mailService.getInboundMessageDetails(messageId)
+      data: {
+        ...message,
+        Attachments: attachments
+      }
     }
   }
-
 
 }
