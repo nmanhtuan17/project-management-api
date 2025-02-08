@@ -30,6 +30,14 @@ export class ProjectMemberController {
     return await this.project.getProjectMembers(projectId)
   }
 
+  @Get('/profile')
+  async getProjectMember(
+    @Param('projectId') projectId: string,
+    @ReqUser() user: AuthPayload
+  ) {
+    return await this.project.getProjectMember(projectId, user.userId)
+  }
+
   @Post('/invite')
   @ProjectManagerOrAboveRequired()
   async inviteMember(

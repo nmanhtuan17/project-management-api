@@ -84,7 +84,7 @@ export class ProjectService {
     return await this.db.projectMember.findOne({
       project: projectId,
       user: userId
-    })
+    }).populate('user', '-password')
   }
 
   async updateProjectAvatar(projectId: string, avatar: string) {
