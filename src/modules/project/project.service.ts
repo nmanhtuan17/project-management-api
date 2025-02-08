@@ -95,6 +95,7 @@ export class ProjectService {
     const newColumn = await this.db.column.create({
       id: 'new',
       title: 'New column',
+      backgroundColor: '#ffffff',
       cards: []
     })
     return await this.db.projectBoard.create({
@@ -107,6 +108,7 @@ export class ProjectService {
     const newColumn = await this.db.column.create({
       id: payload.id,
       title: payload.title,
+      backgroundColor: payload.backgroundColor,
       cards: []
     })
 

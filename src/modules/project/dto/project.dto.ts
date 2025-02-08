@@ -61,6 +61,12 @@ export class CreateColumnDto {
   })
   @IsNotEmpty()
   title: string;
+
+  @ApiProperty({
+    default: '#cccccc'
+  })
+  @IsNotEmpty()
+  backgroundColor: string;
 }
 
 export class CreateLabelDto {

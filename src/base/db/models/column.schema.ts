@@ -20,6 +20,12 @@ export class Column {
   title: String
 
   @Prop({
+    type: String,
+    required: true
+  })
+  backgroundColor: String
+
+  @Prop({
     type: [
       {
         type: mongoose.Schema.Types.ObjectId,

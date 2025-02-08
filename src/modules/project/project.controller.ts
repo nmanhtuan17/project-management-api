@@ -12,6 +12,8 @@ import { HttpError } from "postmark/dist/client/errors/Errors";
 import { ProjectManagerOrAboveRequired, ProjectOwnerRequired } from "./decorators/project.decorator";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { StorageService } from "@/base/services";
+import { $Command } from "@aws-sdk/client-s3";
+import { Column } from "@/base/db";
 
 @Controller('projects')
 @ApiTags('project')
@@ -84,6 +86,9 @@ export class ProjectController {
     @Param('projectId') projectId: string,
     @Body() payload: CreateColumnDto
   ) {
+    const projectBoard = await this.db.projectBoard.findOne({ project: projectId }).populate('columns')
+    const existing = projectBoard.columns.find((c: Column) => c.id.toString() === payload.id)
+    if (existing) throw new HttpException("COLUMN_ID_AREADY_EXISTING", HttpStatus.BAD_REQUEST)
     const board = await this.project.createColumn(projectId, payload)
     if (!board) throw new HttpException("CREATE_FAILED", HttpStatus.BAD_REQUEST)
     return {
@@ -141,11 +146,11 @@ export class ProjectController {
   }
 
   @Get('/:projectId/labels')
-  async getProjectlabels (
+  async getProjectlabels(
     @Param('projectId') projectId: string
   ) {
     return {
-      data: await this.db.projectLabel.find({projectId}),
+      data: await this.db.projectLabel.find({ projectId }),
       message: ''
     }
   }
@@ -155,9 +160,9 @@ export class ProjectController {
   async createProjectLabel(
     @Param('projectId') projectId: string,
     @Body() payload: CreateLabelDto
-  ){
-    const existing = await this.db.projectLabel.findOne({projectId, title: payload.title})
-    if(existing) throw new HttpException(Messages.project.labelExist, HttpStatus.BAD_REQUEST)
+  ) {
+    const existing = await this.db.projectLabel.findOne({ projectId, title: payload.title })
+    if (existing) throw new HttpException(Messages.project.labelExist, HttpStatus.BAD_REQUEST)
     return {
       data: await this.project.createLabel(projectId, payload),
       message: Messages.common.updated
