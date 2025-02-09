@@ -92,15 +92,15 @@ export class ProjectService {
   }
 
   async createBoard(projectId: string) {
-    const newColumn = await this.db.column.create({
-      id: 'new',
-      title: 'New column',
-      backgroundColor: '#ffffff',
-      cards: []
-    })
+    // const newColumn = await this.db.column.create({
+    //   id: 'new',
+    //   title: 'New column',
+    //   backgroundColor: '#ffffff',
+    //   cards: []
+    // })
     return await this.db.projectBoard.create({
       project: projectId,
-      columns: [newColumn._id.toString()]
+      columns: []
     })
   }
 
@@ -135,7 +135,7 @@ export class ProjectService {
 
   async createLabel(projectId: string, payload: CreateLabelDto) {
     return await this.db.projectLabel.create({
-      ...payload, 
+      ...payload,
       projectId
     })
   }
