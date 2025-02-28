@@ -1,6 +1,6 @@
 import { Prop, Schema } from "@nestjs/mongoose";
 import { ApiProperty } from "@nestjs/swagger";
-import mongoose from "mongoose";
+import mongoose, { mongo } from "mongoose";
 import { Project } from "./project.schema";
 import { Messages } from "@/base/config";
 import { IsOptional } from "class-validator";
@@ -9,6 +9,7 @@ import { ProjectMember } from "./project-member.schema";
 import { ProjectLabel } from "./project-label.schema";
 import { ProjectAttachment } from "./project-attachment.schema";
 import { TaskTime } from "@/modules/task/dto/task.dto";
+import { Milestone } from "./milestone.schema";
 
 @Schema({
   timestamps: true
@@ -130,6 +131,12 @@ export class Task {
     default: [],
   })
   labels?: ProjectLabel[] | string[];
+
+  @Prop({
+    type: mongoose.Schema.Types.ObjectId,
+    ref: Milestone.name
+  })
+  milestone?: Milestone | string 
 
   @Prop()
   createdAt?: Date;

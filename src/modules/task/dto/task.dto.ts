@@ -93,6 +93,10 @@ export class CreateTaskDto {
 
   @IsString()
   status?: string;
+
+  @IsString()
+  @IsOptional()
+  milestone?: string;
 }
 
 export class UpdateTaskDto {
