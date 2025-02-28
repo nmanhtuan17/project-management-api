@@ -4,7 +4,7 @@ import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { ReqUser } from "@/common/decorators/req-user.decorator";
 import { AuthPayload } from "../auth/dto/auth.dto";
-import { CreateColumnDto, CreateLabelDto, CreateProjectDto, VerifySlugDto } from "./dto/project.dto";
+import { CreateColumnDto, CreateLabelDto, CreateMilestoneDto, CreateProjectDto, VerifySlugDto } from "./dto/project.dto";
 import { DbService } from "@/base/db/services";
 import { Messages } from "@/base/config";
 import { ProjectRoles } from "@/common/types/project";
@@ -166,6 +166,28 @@ export class ProjectController {
     return {
       data: await this.project.createLabel(projectId, payload),
       message: Messages.common.updated
+    }
+  }
+
+  @Get('/:projectId/milestones')
+  async getMilestones(
+    @Param('projectId') projectId: string,
+  ) {
+    const milestones = await this.db.milestone.find({ project: projectId })
+    return {
+      data: milestones,
+      message: ''
+    }
+  }
+
+  @Post('/:projectId/milestones')
+  async createMilestone(
+    @Param('projectId') projectId: string,
+    @Body() payload: CreateMilestoneDto
+  ) {
+    return {
+      data: await this.project.createMilestone(projectId, payload),
+      message: Messages.common.created
     }
   }
 }

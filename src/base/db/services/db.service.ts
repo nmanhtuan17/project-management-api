@@ -1,7 +1,7 @@
 import { Inject, Injectable, OnApplicationBootstrap } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { BaseRepository } from "@/base/db/repositories";
-import { Project, User, VerificationCode, Session, ProjectMember, Task, ProjectAttachment, ProjectLabel, Email, EmailAttachment, TaskActivity, TaskComment, ProjectInvitation, ProjectBoard, Column } from "@/base/db/models";
+import { Project, User, VerificationCode, Session, ProjectMember, Task, ProjectAttachment, ProjectLabel, Email, EmailAttachment, TaskActivity, TaskComment, ProjectInvitation, ProjectBoard, Column, Milestone } from "@/base/db/models";
 import { PaginateModel } from "mongoose";
 
 @Injectable()
@@ -21,6 +21,7 @@ export class DbService implements OnApplicationBootstrap {
   taskComment: BaseRepository<TaskComment>;
   projectBoard: BaseRepository<ProjectBoard>;
   column: BaseRepository<Column>;
+  milestone: BaseRepository<Milestone>
 
   constructor(
     @InjectModel(User.name)
@@ -52,7 +53,9 @@ export class DbService implements OnApplicationBootstrap {
     @InjectModel(ProjectBoard.name)
     private projectBoardModel: PaginateModel<ProjectBoard>,
     @InjectModel(Column.name)
-    private columnModel: PaginateModel<Column>
+    private columnModel: PaginateModel<Column>,
+    @InjectModel(Milestone.name)
+    private milestoneModel: PaginateModel<Milestone>
   ) {
   }
 
@@ -72,5 +75,6 @@ export class DbService implements OnApplicationBootstrap {
     this.taskComment = new BaseRepository<TaskComment>(this.taskCommentModel)
     this.projectBoard = new BaseRepository<ProjectBoard>(this.projectBoardModel)
     this.column = new BaseRepository<Column>(this.columnModel)
+    this.milestone = new BaseRepository<Milestone>(this.milestoneModel)
   }
 }

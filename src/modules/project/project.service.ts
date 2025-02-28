@@ -1,6 +1,6 @@
 import { DbService } from "@/base/db/services";
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
-import { CreateColumnDto, CreateLabelDto, CreateProjectDto } from "./dto/project.dto";
+import { CreateColumnDto, CreateLabelDto, CreateMilestoneDto, CreateProjectDto } from "./dto/project.dto";
 import { AuthPayload } from "../auth/dto/auth.dto";
 import { Messages } from "@/base/config";
 import { ProjectRoles } from "@/common/types/project";
@@ -137,6 +137,13 @@ export class ProjectService {
     return await this.db.projectLabel.create({
       ...payload,
       projectId
+    })
+  }
+
+  async createMilestone(project: string, payload: CreateMilestoneDto) {
+    return await this.db.milestone.create({
+      ...payload,
+      project
     })
   }
 }

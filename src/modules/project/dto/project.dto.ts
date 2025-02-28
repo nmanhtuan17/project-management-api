@@ -1,5 +1,7 @@
 import { Messages } from "@/base/config";
+import { IsOptionalNonNullable } from "@/common/decorators/optional-non-nullable.decorator";
 import { ProjectTypes } from "@/common/types/project";
+import { TaskTime } from "@/modules/task/dto/task.dto";
 import { ApiProperty } from "@nestjs/swagger";
 import { Transform } from "class-transformer";
 import { IsEmail, IsNotEmpty } from "class-validator";
@@ -86,4 +88,22 @@ export class CreateLabelDto {
   })
   @IsNotEmpty()
   backgroundColor: string;
+}
+
+export class CreateMilestoneDto {
+  @ApiProperty({
+    default: 'example'
+  })
+  title: string;
+
+  @ApiProperty({
+    type: TaskTime,
+  })
+  @IsOptionalNonNullable()
+  time: TaskTime;
+
+  @ApiProperty({
+    default: 'example'
+  })
+  description: string;
 }

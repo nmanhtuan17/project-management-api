@@ -34,6 +34,7 @@ export const Messages = {
     invalidMember: 'INVALID_MEMBER',
     emailActived: 'INTERNAL_EMAIL_ALREADY_ACTIVE',
     updated: 'UPDATED',
+    created: 'CREATED'
   },
   member: {
     emailAliasTooShort: 'EMAIL_ALIAS_TOO_SHORT',
