@@ -105,6 +105,10 @@ export class ProjectController {
     @Param('columnId') columnId: string,
     @Body() payload: CreateColumnDto
   ) {
+
+    const projectBoard = await this.db.projectBoard.findOne({ project: projectId }).populate('columns')
+    const checkValidColumnName = projectBoard.columns.find((c: Column) => c.id.toString() === payload.id)
+    if (checkValidColumnName) throw new HttpException('COLUMN_NAME_EXISTED', HttpStatus.CONFLICT)
     const update = await this.project.updateColumn(columnId, payload)
     if (!update) throw new HttpException("COLUMN_NOT_FOUND", HttpStatus.NOT_FOUND)
     return {
