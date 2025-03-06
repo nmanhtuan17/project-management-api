@@ -97,6 +97,9 @@ export class CreateTaskDto {
   @IsString()
   @IsOptional()
   milestone?: string;
+
+  @IsOptional()
+  labels?: string[];
 }
 
 export class UpdateTaskDto {
@@ -184,6 +187,10 @@ export class UpdateTaskDto {
 
   @IsString({ each: true })
   labels?: string[];
+
+  @IsString()
+  @IsOptional()
+  milestone?: string;
 
   @IsMongoId({ each: true })
   @IsOptionalNonNullable()

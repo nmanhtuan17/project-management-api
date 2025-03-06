@@ -77,7 +77,8 @@ export class TaskController {
           },
         },
         { path: 'attachments' },
-        { path: 'labels' }
+        { path: 'labels' },
+        { path: 'milestone' }
       ],
       limit: paginationDto.limit,
       page: paginationDto.page,
@@ -104,7 +105,7 @@ export class TaskController {
     const membership = await this.project.getProjectMember(spaceId, payload.userId);
     const task = await this.db.task.findOne({
       _id: taskId,
-    }).populate('assignees attachments labels');
+    }).populate('assignees attachments labels milestone');
 
     return {
       data: {
@@ -123,7 +124,7 @@ export class TaskController {
     await this.project.getProjectMember(projectId, user.userId);
     const tasks = await this.db.task.find({
       parentTask: taskId,
-    }).populate('assignees attachments labels');
+    }).populate('assignees attachments labels milestone');
     return {
       data: await Promise.all(tasks.map(async task => {
         return {
@@ -178,7 +179,7 @@ export class TaskController {
       _id: taskId,
     }).populate('assignees');
     if (!task) throw new HttpException(Messages.task.taskNotFound, HttpStatus.NOT_FOUND);
-    let updatableFields = ['title', 'description', 'status', 'type', 'priority', 'time', 'attachments', 'parentTask', 'labels', 'assignees'];
+    let updatableFields = ['title', 'description', 'status', 'type', 'priority', 'time', 'attachments', 'parentTask', 'labels', 'assignees', 'milestone'];
 
     for (let field of updatableFields) {
       if (updateTaskDto[field] && updateTaskDto[field] !== task[field]) {
@@ -239,7 +240,7 @@ export class TaskController {
     Object.assign(task, updateTaskDto);
     // await task.save();
     const updatededTask = await this.db.task.findByIdAndUpdate(task._id, task, { new: true })
-    let signAttachments = await (await updatededTask.populate('attachments'))
+    let signAttachments = await (await updatededTask.populate('attachments labels milestone'))
       .populate({
         path: 'assignees',
         populate: 'user'
@@ -344,6 +345,8 @@ export class TaskController {
       parentTask: parentTask?._id?.toString() ?? undefined,
       status: createTaskDto.status,
       priority: createTaskDto.priority,
+      milestone: createTaskDto.milestone,
+      labels: createTaskDto.labels
     });
 
     return {

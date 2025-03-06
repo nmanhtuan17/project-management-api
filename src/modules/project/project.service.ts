@@ -92,15 +92,30 @@ export class ProjectService {
   }
 
   async createBoard(projectId: string) {
-    // const newColumn = await this.db.column.create({
-    //   id: 'new',
-    //   title: 'New column',
-    //   backgroundColor: '#ffffff',
-    //   cards: []
-    // })
+    const [todoColumn, inProgressColumn, doneColumn] = await Promise.all([
+      this.db.column.create({
+        id: 'to-do',
+        title: 'To do',
+        backgroundColor: '#cccccc',
+        cards: []
+      }),
+      this.db.column.create({
+        id: 'in-progress',
+        title: 'In Progress',
+        backgroundColor: '#1c84c6',
+        cards: []
+      }),
+      this.db.column.create({
+        id: 'done',
+        title: 'Done',
+        backgroundColor: '#93c572',
+        cards: []
+      })
+    ]);
+
     return await this.db.projectBoard.create({
       project: projectId,
-      columns: []
+      columns: [todoColumn._id.toString(), inProgressColumn._id.toString(), doneColumn._id.toString()]
     })
   }
 
