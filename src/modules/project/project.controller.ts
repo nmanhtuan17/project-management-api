@@ -178,10 +178,34 @@ export class ProjectController {
     @Param('projectId') projectId: string,
   ) {
     const milestones = await this.db.milestone.find({ project: projectId })
+    const mappedData = await Promise.all(milestones.map(milestone =>
+      this.db.task.find({ milestone: milestone._id }).then(tasks => ({
+        milestone,
+        tasks
+      }))
+    ))
+
     return {
-      data: milestones,
+      data: mappedData,
       message: ''
     }
+  }
+
+  @Get('/projectId/milestones/:milestoneId')
+  async getMilestone(
+    @Param('projectId') projectId: string,
+    @Param('milestoneId') milestoneId: string,
+  ) {
+    const milestone = await this.db.milestone.getById(milestoneId);
+    const allTasks = await this.db.task.find({ milestone: milestoneId });
+
+    return ({
+      data: {
+        ...milestone,
+        tasks: allTasks
+      },
+      message: ''
+    })
   }
 
   @Post('/:projectId/milestones')
