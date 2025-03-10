@@ -311,7 +311,6 @@ export class TaskController {
     const member = await this.project.getProjectMember(projectId, payload.userId);
 
     if (createTaskDto.assignees) {
-      // validate all assignees
       const counted = await this.db.projectMember.count({
         _id: {
           $in: createTaskDto.assignees,
