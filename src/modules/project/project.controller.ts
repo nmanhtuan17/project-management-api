@@ -14,6 +14,7 @@ import { FileInterceptor } from "@nestjs/platform-express";
 import { StorageService } from "@/base/services";
 import { $Command } from "@aws-sdk/client-s3";
 import { Column } from "@/base/db";
+import dayjs from "dayjs";
 
 @Controller('projects')
 @ApiTags('project')
@@ -216,6 +217,23 @@ export class ProjectController {
     return {
       data: await this.project.createMilestone(projectId, payload),
       message: Messages.common.created
+    }
+  }
+
+  @Get('/statistics')
+  async getStatistics(
+    @ReqUser() payload: AuthPayload
+  ) {
+    const today = dayjs()
+    const tasks = await this.db.task.find({ assignees: payload.userId })
+    const overdueTasks = tasks.filter(task => today.isAfter(task.time.to))
+
+    return {
+      data: {
+        overdue: overdueTasks,
+        total: tasks
+      },
+      message: ''
     }
   }
 }
