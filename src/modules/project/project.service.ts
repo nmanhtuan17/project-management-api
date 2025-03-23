@@ -95,19 +95,19 @@ export class ProjectService {
     const [todoColumn, inProgressColumn, doneColumn] = await Promise.all([
       this.db.column.create({
         id: 'to-do',
-        title: 'To do',
+        title: 'Chưa thực hiện',
         backgroundColor: '#cccccc',
         cards: []
       }),
       this.db.column.create({
         id: 'in-progress',
-        title: 'In Progress',
+        title: 'Đang sử lý',
         backgroundColor: '#1c84c6',
         cards: []
       }),
       this.db.column.create({
         id: 'done',
-        title: 'Done',
+        title: 'Hoàn thành',
         backgroundColor: '#93c572',
         cards: []
       })
