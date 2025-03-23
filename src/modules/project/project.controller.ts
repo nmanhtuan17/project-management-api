@@ -14,7 +14,7 @@ import { FileInterceptor } from "@nestjs/platform-express";
 import { StorageService } from "@/base/services";
 import { $Command } from "@aws-sdk/client-s3";
 import { Column } from "@/base/db";
-import dayjs from "dayjs";
+import * as dayjs from "dayjs";
 
 @Controller('projects')
 @ApiTags('project')
@@ -34,6 +34,24 @@ export class ProjectController {
   ) {
     return await this.project.getAll(user)
   }
+
+  // @Get('/statistics')
+  // async getStatistics(
+  //   @ReqUser() user: AuthPayload
+  // ) {
+  //   const today = dayjs()
+  //   const tasks = await this.db.task.getAll()
+  //   const overdueTasks = tasks.filter(task => today.isAfter(task.time.to))
+
+  //   return {
+  //     data: {
+  //       overdue: overdueTasks,
+  //       total: tasks
+  //     },
+  //     message: ''
+  //   }
+  // }
+
   @Get('/:projectId')
   async getProject(
     @Param('projectId') projectId: string
@@ -51,7 +69,7 @@ export class ProjectController {
     await this.project.createBoard(project._id.toString())
     return {
       data: project,
-      message: Messages.project.projectCreated,
+      message: Messages.common.created,
       status: HttpStatus.CREATED
     }
   }
@@ -63,7 +81,7 @@ export class ProjectController {
     const slug = await this.db.project.findOne({ slug: payload.slug })
     if (slug) throw new HttpException(Messages.project.slugExists, HttpStatus.CONFLICT)
     return {
-      message: 'SLUG_VERIFIED',
+      message: Messages.common.verified,
       status: HttpStatus.OK
     }
   }
@@ -76,7 +94,7 @@ export class ProjectController {
     if (!projectBoard) throw new HttpException('NOT_FOUND', HttpStatus.NOT_FOUND)
     return {
       data: projectBoard,
-      message: 'SUCCESS',
+      message: Messages.common.success,
       status: HttpStatus.OK
     }
   }
@@ -94,7 +112,7 @@ export class ProjectController {
     if (!board) throw new HttpException("CREATE_FAILED", HttpStatus.BAD_REQUEST)
     return {
       data: board,
-      message: 'COLUMN_UPDATED',
+      message: Messages.common.created,
       status: HttpStatus.CREATED
     }
   }
@@ -113,7 +131,7 @@ export class ProjectController {
     const update = await this.project.updateColumn(columnId, payload)
     if (!update) throw new HttpException("COLUMN_NOT_FOUND", HttpStatus.NOT_FOUND)
     return {
-      message: 'COLUMN_UPDATED',
+      message: Messages.common.updated,
       status: HttpStatus.OK
     }
   }
@@ -126,7 +144,7 @@ export class ProjectController {
     try {
       await this.project.deleteColumn(columnId);
       return {
-        message: 'COLUMN_UPDATED',
+        message: Messages.common.success,
         status: HttpStatus.OK
       }
     } catch (error) {
@@ -146,7 +164,7 @@ export class ProjectController {
 
     return {
       data: projectUpdated,
-      message: Messages.project.projectUpdated
+      message: Messages.common.updated
     }
   }
 
@@ -220,20 +238,23 @@ export class ProjectController {
     }
   }
 
-  @Get('/statistics')
-  async getStatistics(
-    @ReqUser() payload: AuthPayload
-  ) {
-    const today = dayjs()
-    const tasks = await this.db.task.find({ assignees: payload.userId })
-    const overdueTasks = tasks.filter(task => today.isAfter(task.time.to))
+  // @Get('/statistics')
+  // async getStatistics(
+  //   @ReqUser() user: AuthPayload
+  // ) {
+  //   console.log(123)
+  //   // const today = dayjs()
+  //   // const tasks = await this.db.task.find({ assignees: { $in: [user.userId.toString()] } })
+  //   // const overdueTasks = tasks.filter(task => today.isAfter(task.time.to))
 
-    return {
-      data: {
-        overdue: overdueTasks,
-        total: tasks
-      },
-      message: ''
-    }
-  }
+  //   // return {
+  //   //   data: {
+  //   //     overdue: overdueTasks,
+  //   //     total: tasks
+  //   //   },
+  //   //   message: ''
+  //   // }
+  // }
+
+
 }

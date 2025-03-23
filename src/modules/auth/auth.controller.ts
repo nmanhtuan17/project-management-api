@@ -101,7 +101,7 @@ export class AuthController {
     user.emailVerified = true;
     await user.save();
     return {
-      message: 'EMAIL_VERIFIED',
+      message: Messages.common.verified,
       status: HttpStatus.OK,
     };
   }
@@ -140,11 +140,11 @@ export class AuthController {
     await user.save();
     return {
       data: (await this.user.getById(payload.userId)).toJSON(),
-      message: Messages.auth.passwordUpdated,
+      message: Messages.common.updated,
     };
   }
 
-  
+
   @UseGuards(JwtAuthGuard)
   @Get("jwt/check")
   public jwtCheck(@ReqUser() user: AuthPayload): AuthPayload {
