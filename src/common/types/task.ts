@@ -2,16 +2,12 @@ export enum TaskTypes {
   GENERAL = "general",
   ISSUE = "issue",
   BUG = "bug",
-  INCIDENT = "incident",
-  STORY = "story",
 }
 
 export enum TaskStatus {
-  PENDING = "pending",
-  ON_GOING = "on_going",
-  IN_REVIEW = "in_review",
-  COMPLETED = "completed",
-  REJECTED = "rejected",
+  TODO = "to-do",
+  INPROGRESS = "in-progress",
+  DONE = "done"
 }
 
 export enum TaskPriority {

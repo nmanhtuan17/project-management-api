@@ -101,7 +101,7 @@ export class ProjectService {
       }),
       this.db.column.create({
         id: 'in-progress',
-        title: 'Đang sử lý',
+        title: 'Đang xử lý',
         backgroundColor: '#1c84c6',
         cards: []
       }),
