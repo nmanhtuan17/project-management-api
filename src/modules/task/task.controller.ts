@@ -135,37 +135,25 @@ export class TaskController {
     };
   }
 
-  // @Get('/:taskId/activities')
-  // public async getTaskActivities(
-  //   @Param('projectId') projectId: string,
-  //   @Param('taskId') taskId: string,
-  //   @ReqUser() user: Payload,
-  // ) {
-  //   await this.project.getProjectMember(projectId, user.userId);
-  //   const task = await this.db.task.findOne({
-  //     _id: taskId,
-  //   });
-  //   if (!task) throw new HttpException(Messages.task.taskNotFound, HttpStatus.NOT_FOUND);
-  //   const activities = await this.db.taskActivity.find({
-  //     task: task._id.toString(),
-  //   }).populate('member');
-  //   let data = [];
-  //   for (let act of activities) {
-  //     switch (act.type) {
-  //       case TaskActivityType.Comment:
-  //         let comment = await this.db.comment.findOne({
-  //           _id: act.linkedItemId,
-  //         });
-  //         if (comment) {
-  //           act.meta = comment.toJSON();
-  //         } else continue;
-  //     }
-  //     data.push(act.toJSON());
-  //   }
-  //   return {
-  //     data,
-  //   };
-  // }
+  @Get('/:taskId/activities')
+  public async getTaskActivities(
+    @Param('projectId') projectId: string,
+    @Param('taskId') taskId: string,
+    @ReqUser() user: AuthPayload,
+  ) {
+    await this.project.getProjectMember(projectId, user.userId);
+    const task = await this.db.task.findOne({
+      _id: taskId,
+    });
+    if (!task) throw new HttpException(Messages.task.taskNotFound, HttpStatus.NOT_FOUND);
+    const activities = await this.db.taskActivity.find({
+      task: task._id.toString(),
+    }).populate({ path: 'member', populate: 'user' });
+    return {
+      data: activities,
+      message: Messages.common.success
+    };
+  }
 
   @Put('/:taskId')
   public async updateProjectTask(
@@ -185,7 +173,7 @@ export class TaskController {
       if (updateTaskDto[field] && updateTaskDto[field] !== task[field]) {
         if (field === 'time' && updateTaskDto[field]?.from.toString() === task[field]?.from.toString() && updateTaskDto[field]?.to.toString() === task[field]?.to.toString()) continue;
         if (field === 'attachments' && compareArrayString(updateTaskDto[field], task.attachments.map(a => a.toString()))) continue;
-        if (field === 'assignees' && compareArrayString(updateTaskDto[field], task.assignees.map(a => a.toString()))) continue;
+        if (field === 'assignees' && compareArrayString(updateTaskDto[field], task.assignees.map(a => a._id.toString()))) continue;
         if (field === 'labels' && compareArrayString(updateTaskDto[field], task.labels.map(a => a.toString()))) continue;
         if (field === 'parentTask') {
           const willBeParent = await this.task.getById(updateTaskDto.parentTask);
