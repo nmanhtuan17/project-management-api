@@ -147,9 +147,6 @@ export const Messages = {
     invalidParentTask: 'INVALID_PARENT_TASK',
     notProjectTask: 'NOT_PROJECT_TASK',
   },
-  taskComment: {
-    commentTextRequired: 'COMMENT_TEXT_REQUIRED'
-  },
   email: {
     invalidSubject: 'INVALID_SUBJECT',
     invalidBody: 'INVALID_BODY',

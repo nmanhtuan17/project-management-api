@@ -5,7 +5,7 @@ import { Messages } from "@/base/config";
 import { FilterQuery, HydratedDocument, Types } from "mongoose";
 import { Task } from "@/base/db";
 import { ReqUser } from "@/common/decorators/req-user.decorator";
-import { CreateTaskCommentDto, CreateTaskDto, TaskFilterDto, UpdateTaskDto } from "./dto/task.dto";
+import { CreateTaskDto, TaskFilterDto, UpdateTaskDto } from "./dto/task.dto";
 import { AuthPayload } from "../auth/dto/auth.dto";
 import { DbService } from "@/base/db/services";
 import { TaskService } from "./task.service";
@@ -242,51 +242,6 @@ export class TaskController {
           attachments: await this.storage.getSignedTaskAttachments(signAttachments),
         },
       },
-    };
-  }
-
-  @Post('/:taskId/comments')
-  public async createTaskComment(
-    @Param('projectId') projectId: string,
-    @Param('taskId') taskId: string,
-    @ReqUser() payload: AuthPayload,
-    @Body() createCommentDto: CreateTaskCommentDto,
-  ) {
-    const member = await this.project.getProjectMember(projectId, payload.userId);
-    const task = await this.db.task.findOne({
-      _id: taskId,
-    });
-    if (!task) throw new HttpException(Messages.task.taskNotFound, HttpStatus.NOT_FOUND);
-    const newComment = await this.db.taskComment.create({
-      task: task._id.toString(),
-      from: payload.userId,
-      text: createCommentDto.text
-    })
-    await this.db.taskActivity.create({
-      type: TaskActivityType.Comment,
-      member: member._id.toString(),
-      linkedItemId: newComment._id.toString(),
-      task: task._id.toString(),
-    });
-    return {
-      data: newComment,
-    };
-  }
-
-  @Get('/:taskId/comments')
-  public async getTaskComments(
-    @Param('projectId') projectId: string,
-    @Param('taskId') taskId: string,
-    @ReqUser() payload: AuthPayload,
-  ) {
-    const member = await this.project.getProjectMember(projectId, payload.userId);
-    const task = await this.task.getById(taskId);
-    if (!task) throw new HttpException(Messages.task.taskNotFound, HttpStatus.NOT_FOUND);
-    const comments = await this.db.taskComment.find({
-      task: task._id,
-    }).populate('from');
-    return {
-      data: comments.map(c => c.toJSON()),
     };
   }
 

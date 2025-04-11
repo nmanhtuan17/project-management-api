@@ -197,21 +197,6 @@ export class UpdateTaskDto {
   assignees?: string[];
 }
 
-export class CreateTaskCommentDto {
-  @ApiProperty({
-    type: String,
-    example: 'Some comment...',
-    description: 'Comment text',
-  })
-  @IsString({
-    message: Messages.taskComment.commentTextRequired,
-  })
-  @IsNotEmpty({
-    message: Messages.taskComment.commentTextRequired,
-  })
-  text: string;
-}
-
 
 export class TaskFilterDto {
   @IsOptional()
