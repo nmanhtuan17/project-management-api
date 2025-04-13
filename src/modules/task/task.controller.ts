@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, ForbiddenException, Get, HttpException, HttpStatus, Param, Post, Put, UnauthorizedException, UseGuards } from "@nestjs/common";
+import { BadRequestException, Body, Controller, Delete, ForbiddenException, Get, HttpException, HttpStatus, Param, Post, Put, UnauthorizedException, UseGuards } from "@nestjs/common";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 import { Messages } from "@/base/config";
@@ -12,7 +12,7 @@ import { TaskService } from "./task.service";
 import { ProjectService } from "../project/project.service";
 import { ApiTaskFilter, TaskFilter } from "./decorators/task-filter.decorator";
 import { ApiPagination } from "@/common/decorators/api-pagination.decorator";
-import { PaginationDto, TaskActivityType } from "@/common/types";
+import { PaginationDto, ProjectRoles, TaskActivityType } from "@/common/types";
 import { Pagination } from "@/common/decorators/pagination.decorator";
 import { StorageService } from "@/base/services";
 import { compareArrayString } from "@/common/utils";
@@ -288,12 +288,32 @@ export class TaskController {
       status: createTaskDto.status,
       priority: createTaskDto.priority,
       milestone: createTaskDto.milestone,
-      labels: createTaskDto.labels
+      labels: createTaskDto.labels,
+      reporter: member._id.toString()
     });
 
     return {
       data: newTask,
       message: Messages.task.taskCreated,
     };
+  }
+
+  @Delete('/:taskId')
+  async archivedTask(
+    @Param('projectId') projectId: string,
+    @Param('taskId') taskId: string,
+    @ReqUser() payload: AuthPayload
+  ) {
+    const member = await this.db.projectMember.findOne({ project: projectId, user: payload.userId })
+    const task = await this.db.task.getById(taskId)
+    if (member.role === ProjectRoles.OWNER || (task.reporter && (task.reporter.toString() === member._id.toString()))) {
+      task.archived = true;
+      await task.save()
+    } else {
+      throw new HttpException(Messages.common.actionNotPermitted, HttpStatus.UNAUTHORIZED)
+    }
+    return {
+      message: Messages.common.updated
+    }
   }
 }

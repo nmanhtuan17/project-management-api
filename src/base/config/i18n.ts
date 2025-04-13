@@ -18,7 +18,7 @@ export const Messages = {
     invalidGroup: 'INVALID_GROUP',
     invalidProject: 'INVALID_PROJECT',
     unknownError: 'UNKNOWN_ERROR',
-    actionNotPermitted: 'ACTION_NOT_PERMITTED',
+    actionNotPermitted: 'Hành động không được cho phép',
     invalidEmail: 'Email không tồn tại',
     displayNameTooShort: 'DISPLAY_NAME_TOO_SHORT',
     displayNameTooLong: 'DISPLAY_NAME_TOO_LONG',
@@ -36,7 +36,8 @@ export const Messages = {
     updated: 'Đã cập nhật',
     created: 'Thêm thành công',
     verified: 'Đã xác thực',
-    success: 'Success'
+    success: 'Success',
+    deleted: 'Xóa thành công'
   },
   member: {
     emailAliasTooShort: 'EMAIL_ALIAS_TOO_SHORT',
