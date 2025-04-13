@@ -2,12 +2,13 @@ import { HttpStatus, Injectable } from "@nestjs/common";
 import { AuthPayload, RegisterDto } from "../auth/dto/auth.dto";
 import { DbService } from "@/base/db/services";
 import { hashSync } from "bcrypt";
-import { SystemRoles } from "@/common/types";
+import { AuthProvider, SystemRoles } from "@/common/types";
 import { Md5 } from "ts-md5";
 import { ApiError } from "@/common/errors/api.error";
 import { Messages } from "@/base/config";
 import { UpdateProfileDto } from "./dto/user.dto";
 import { ConfigService } from "@nestjs/config";
+import { GoogleDto } from "@/modules/auth/dto/google.dto";
 
 @Injectable()
 export class UserService {
@@ -29,6 +30,22 @@ export class UserService {
       avatar: `https://gravatar.com/avatar/${Md5.hashStr(email)}`,
       alias,
       internalEmail: `${alias}@${this.config.get('mail.domain')}`
+    })
+  }
+
+  async createGoogleUser(data: GoogleDto) {
+    const { email, fullName, avatar } = data
+    const existing = await this.db.user.findOne({ email });
+    if (existing) throw new ApiError(Messages.auth.emailUsed, HttpStatus.BAD_REQUEST);
+    const alias = email.split('@')[0]
+    return this.db.user.create({
+      email,
+      fullName,
+      emailVerified: true,
+      avatar,
+      alias,
+      internalEmail: `${alias}@${this.config.get('mail.domain')}`,
+      provider: AuthProvider.GOOGLE
     })
   }
 

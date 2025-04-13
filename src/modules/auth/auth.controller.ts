@@ -65,6 +65,17 @@ export class AuthController {
     };
   }
 
+  @Post('google-login')
+  async googleLogin(@Body('token') token: string) {
+    const user = await this.authService.verifyGoogleToken(token)
+    const newSession = await this.authService.createSession(user, 'web');
+    return {
+      message: Messages.auth.loginSuccess,
+      data: this.authService.signUser(user, newSession._id.toString()),
+      status: HttpStatus.OK,
+    };
+  }
+
   @Post('register')
   async register(@Body() registerDto: RegisterDto) {
     try {

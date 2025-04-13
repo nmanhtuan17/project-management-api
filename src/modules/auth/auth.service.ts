@@ -10,6 +10,8 @@ import { ConfigService } from "@nestjs/config";
 import { JwtService } from "@nestjs/jwt";
 import * as dayjs from "dayjs";
 import { Messages } from "@/base/config";
+import { UserService } from "@/modules/user/user.service";
+import { OAuth2Client } from "google-auth-library";
 
 @Injectable()
 export class AuthService {
@@ -17,10 +19,12 @@ export class AuthService {
     private db: DbService,
     private mail: MailService,
     private jwt: JwtService,
-    private config: ConfigService
+    private config: ConfigService,
+    private userService: UserService
   ) {
 
   }
+  private client = new OAuth2Client(this.config.get('auth.google.client_id'));
 
   public async validateUser(email: string, password: string): Promise<HydratedDocument<User> | null> {
     const user = await this.db.user.findOne({
@@ -34,6 +38,24 @@ export class AuthService {
       return user;
     }
     return null;
+  }
+
+  async verifyGoogleToken(idToken: string) {
+    const ticket = await this.client.verifyIdToken({
+      idToken,
+      audience: this.config.get('auth.google.client_id'),
+    });
+
+    const payload = ticket.getPayload();
+    let user = await this.db.user.findOne({email: payload.email});
+    if (!user) {
+      user = await this.userService.createGoogleUser({
+        fullName: `${payload.family_name} ${payload.given_name}`,
+        email: payload.email,
+        avatar: payload.picture
+      });
+    }
+    return user
   }
 
   public jwtSign(data: AuthPayload): JwtSign {

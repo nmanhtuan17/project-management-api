@@ -52,4 +52,6 @@ export class User {
   @ApiProperty()
   @Prop({})
   bio?: string;
+
+  provider?: string;
 }
