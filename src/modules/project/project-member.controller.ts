@@ -1,11 +1,11 @@
 import { DbService } from "@/base/db/services";
-import { Body, Controller, Get, HttpException, HttpStatus, Param, Post, Query, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, Post, Query, UseGuards } from "@nestjs/common";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 import { ProjectService } from "./project.service";
 import { ReqUser } from "@/common/decorators/req-user.decorator";
 import { AuthPayload } from "../auth/dto/auth.dto";
-import { ProjectManagerOrAboveRequired } from "./decorators/project.decorator";
+import { ProjectManagerOrAboveRequired, ProjectOwnerRequired } from "./decorators/project.decorator";
 import { Messages } from "@/base/config";
 import { ProjectRoles, ProjectTypes } from "@/common/types/project";
 import { InviteMemberDto } from "./dto/project.dto";
@@ -87,6 +87,43 @@ export class ProjectMemberController {
     return {
       message: Messages.project.joinedProject,
       status: HttpStatus.OK
+    }
+  }
+
+  @Post('/:memberId/role')
+  @ProjectManagerOrAboveRequired()
+  async updateRole(
+    @Param('memberId') memberId: string,
+    @Body() payload: { role: ProjectRoles }
+  ) {
+    const member = await this.db.projectMember.getById(memberId)
+    if (member.role === ProjectRoles.OWNER) {
+      throw new HttpException(Messages.common.actionNotPermitted, HttpStatus.NOT_ACCEPTABLE)
+    } else {
+      member.role = payload.role
+      await member.save()
+    }
+    return {
+      data: member,
+      message: Messages.common.updated
+    }
+  }
+
+  @Delete('/:memberId')
+  @ProjectOwnerRequired()
+  async removeMember(
+    @Param('projectId') projectId: string,
+    @Param('memberId') memberId: string
+  ) {
+    const member = await this.db.projectMember.getById(memberId)
+    if (member.role === ProjectRoles.OWNER) {
+      throw new HttpException(Messages.common.actionNotPermitted, HttpStatus.NOT_ACCEPTABLE)
+    } else {
+      const removeMember = await this.project.removeMember(projectId, memberId);
+      return {
+        data: removeMember,
+        message: Messages.common.updated
+      }
     }
   }
 }

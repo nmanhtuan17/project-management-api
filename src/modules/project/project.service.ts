@@ -63,6 +63,16 @@ export class ProjectService {
     return update;
   }
 
+  async removeMember(projectId: string, memberId: string) {
+    const remove = await this.db.projectMember.deleteMany({
+      project: projectId,
+      _id: memberId,
+    });
+
+    await this.updateCalculateMember(projectId);
+    return remove;
+  }
+
   async updateCalculateMember(targetProject: string | HydratedDocument<Project>) {
     const total = await this.db.projectMember.count({
       project: typeof targetProject === 'string' ? targetProject : targetProject._id,
