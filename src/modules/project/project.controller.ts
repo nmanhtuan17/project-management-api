@@ -242,10 +242,10 @@ export class ProjectController {
   async updateMilestone(
     @Param('projectId') projectId: string,
     @Param('milestoneId') milestoneId: string,
-    @Body() payload: { closed: boolean }
+    @Body() payload: CreateMilestoneDto
   ) {
     return {
-      data: await this.project.updateMilestone(milestoneId, payload.closed),
+      data: await this.project.updateMilestone(milestoneId, payload),
       message: Messages.common.updated
     }
   }

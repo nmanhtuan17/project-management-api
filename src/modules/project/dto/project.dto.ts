@@ -106,4 +106,9 @@ export class CreateMilestoneDto {
     default: 'example'
   })
   description: string;
+
+  @ApiProperty({
+    default: 'example'
+  })
+  closed?: string;
 }

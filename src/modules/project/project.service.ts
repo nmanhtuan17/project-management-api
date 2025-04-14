@@ -6,7 +6,7 @@ import { Messages } from "@/base/config";
 import { MilestoneStatus, ProjectRoles } from "@/common/types/project";
 import { randomString, slugify } from "@/common/utils";
 import { HydratedDocument } from "mongoose";
-import { Column, Project } from "@/base/db";
+import { Column, Milestone, Project } from "@/base/db";
 
 @Injectable()
 export class ProjectService {
@@ -173,7 +173,7 @@ export class ProjectService {
     })
   }
 
-  async updateMilestone(milestoneId: string, closed: boolean) {
-    return await this.db.milestone.findByIdAndUpdate(milestoneId, { closed })
+  async updateMilestone(milestoneId: string, payload: CreateMilestoneDto) {
+    return await this.db.milestone.findByIdAndUpdate(milestoneId, payload)
   }
 }
