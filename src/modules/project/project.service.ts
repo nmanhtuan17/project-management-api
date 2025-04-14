@@ -169,11 +169,11 @@ export class ProjectService {
     return await this.db.milestone.create({
       ...payload,
       project,
-      status: MilestoneStatus.OPEN
+      closed: false
     })
   }
 
-  async updateMilestone(milestoneId: string, status: MilestoneStatus) {
-    return await this.db.milestone.findByIdAndUpdate(milestoneId, { status })
+  async updateMilestone(milestoneId: string, closed: boolean) {
+    return await this.db.milestone.findByIdAndUpdate(milestoneId, { closed })
   }
 }

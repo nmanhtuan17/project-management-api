@@ -40,8 +40,8 @@ export class Milestone {
   project: Project | string
 
   @Prop({
-    type: String,
+    type: Boolean,
     required: true
   })
-  status: string
+  closed: boolean
 }
