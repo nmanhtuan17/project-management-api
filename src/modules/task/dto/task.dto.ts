@@ -16,7 +16,6 @@ import {
 import { enumToArray } from 'src/common/utils';
 
 export class TaskTime {
-
   @IsDateString({}, {
     message: Messages.common.invalidDate,
   })

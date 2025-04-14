@@ -40,8 +40,8 @@ export class Milestone {
   project: Project | string
 
   @Prop({
-    type: MilestoneStatus,
+    type: String,
     required: true
   })
-  status: MilestoneStatus
+  status: string
 }
