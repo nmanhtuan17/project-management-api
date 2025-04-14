@@ -3,7 +3,7 @@ import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { CreateColumnDto, CreateLabelDto, CreateMilestoneDto, CreateProjectDto } from "./dto/project.dto";
 import { AuthPayload } from "../auth/dto/auth.dto";
 import { Messages } from "@/base/config";
-import { ProjectRoles } from "@/common/types/project";
+import { MilestoneStatus, ProjectRoles } from "@/common/types/project";
 import { randomString, slugify } from "@/common/utils";
 import { HydratedDocument } from "mongoose";
 import { Column, Project } from "@/base/db";
@@ -168,7 +168,12 @@ export class ProjectService {
   async createMilestone(project: string, payload: CreateMilestoneDto) {
     return await this.db.milestone.create({
       ...payload,
-      project
+      project,
+      status: MilestoneStatus.OPEN
     })
+  }
+
+  async updateMilestone(milestoneId: string, status: MilestoneStatus) {
+    return await this.db.milestone.findByIdAndUpdate(milestoneId, { status })
   }
 }

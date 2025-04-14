@@ -3,6 +3,7 @@ import { Prop, Schema } from "@nestjs/mongoose";
 import { ApiProperty } from "@nestjs/swagger";
 import { TaskTime } from '@/modules/task/dto/task.dto';
 import { Project } from './project.schema';
+import { MilestoneStatus } from '@/common/types';
 
 
 
@@ -10,9 +11,7 @@ import { Project } from './project.schema';
   timestamps: true
 })
 export class Milestone {
-  @ApiProperty({
-
-  })
+  @ApiProperty({})
   _id: mongoose.Schema.Types.ObjectId
 
   @Prop({
@@ -39,4 +38,10 @@ export class Milestone {
     ref: Project.name
   })
   project: Project | string
+
+  @Prop({
+    type: MilestoneStatus,
+    required: true
+  })
+  status: MilestoneStatus
 }

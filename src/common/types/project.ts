@@ -8,3 +8,8 @@ export enum ProjectRoles {
   MANAGER = 'manager',
   MEMBER = 'member'
 }
+
+export enum MilestoneStatus {
+  OPEN = 'open',
+  CLOSED = 'closed'
+}

@@ -7,7 +7,7 @@ import { AuthPayload } from "../auth/dto/auth.dto";
 import { CreateColumnDto, CreateLabelDto, CreateMilestoneDto, CreateProjectDto, VerifySlugDto } from "./dto/project.dto";
 import { DbService } from "@/base/db/services";
 import { Messages } from "@/base/config";
-import { ProjectRoles } from "@/common/types/project";
+import { MilestoneStatus, ProjectRoles } from "@/common/types/project";
 import { HttpError } from "postmark/dist/client/errors/Errors";
 import { ProjectManagerOrAboveRequired, ProjectOwnerRequired } from "./decorators/project.decorator";
 import { FileInterceptor } from "@nestjs/platform-express";
@@ -235,6 +235,18 @@ export class ProjectController {
     return {
       data: await this.project.createMilestone(projectId, payload),
       message: Messages.common.created
+    }
+  }
+
+  @Put('/:projectId/milestones/:milestoneId')
+  async updateMilestone(
+    @Param('projectId') projectId: string,
+    @Param('milestoneId') milestoneId: string,
+    @Body() payload: { status: MilestoneStatus }
+  ) {
+    return {
+      data: await this.project.updateMilestone(milestoneId, payload.status),
+      message: Messages.common.updated
     }
   }
 
