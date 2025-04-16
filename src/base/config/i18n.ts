@@ -3,7 +3,7 @@ export const Messages = {
     wrongEmailPassword: 'Email hoặc mật khẩu không chính xác',
     emailNotVerified: 'Email chưa được xác thực',
     loginSuccess: 'Đăng nhập thành công',
-    passwordsNotMatch: 'Nhập khẩu không khớp',
+    passwordsNotMatch: 'Mật khẩu không khớp',
     wrongOldPassword: 'Mật khẩu cũ không chính xác',
     passwordUpdated: 'PASSWORD_UPDATED',
     emailUsed: 'EMAIL_USED',

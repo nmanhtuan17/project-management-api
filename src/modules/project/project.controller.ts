@@ -4,7 +4,7 @@ import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { ReqUser } from "@/common/decorators/req-user.decorator";
 import { AuthPayload } from "../auth/dto/auth.dto";
-import { CreateColumnDto, CreateLabelDto, CreateMilestoneDto, CreateProjectDto, VerifySlugDto } from "./dto/project.dto";
+import { CreateColumnDto, CreateLabelDto, CreateMilestoneDto, CreateProjectDto, MilsetoneFilterDto, VerifySlugDto } from "./dto/project.dto";
 import { DbService } from "@/base/db/services";
 import { Messages } from "@/base/config";
 import { MilestoneStatus, ProjectRoles } from "@/common/types/project";
@@ -13,8 +13,10 @@ import { ProjectManagerOrAboveRequired, ProjectOwnerRequired } from "./decorator
 import { FileInterceptor } from "@nestjs/platform-express";
 import { StorageService } from "@/base/services";
 import { $Command } from "@aws-sdk/client-s3";
-import { Column } from "@/base/db";
+import { Column, Milestone } from "@/base/db";
 import * as dayjs from "dayjs";
+import { ApiMilestoneFilter, MilsetoneFilter } from "@/modules/project/decorators/milestone-query.decorator";
+import { FilterQuery } from "mongoose";
 
 @Controller('projects')
 @ApiTags('project')
@@ -193,10 +195,32 @@ export class ProjectController {
   }
 
   @Get('/:projectId/milestones')
+  @ApiMilestoneFilter()
   async getMilestones(
     @Param('projectId') projectId: string,
+    @MilsetoneFilter() milestoneFilter?: MilsetoneFilterDto
   ) {
-    const milestones = await this.db.milestone.find({ project: projectId })
+    console.log(milestoneFilter)
+    let additionalQuery = {};
+
+    const query = milestoneFilter.query;
+    if (query && query?.trim() !== '') {
+      additionalQuery['title'] = { $regex: query, $options: 'i' };
+    }
+
+    for (let key in milestoneFilter) {
+      if (milestoneFilter[key] && !['query'].includes(key)) {
+        additionalQuery[key] = milestoneFilter[key];
+      }
+    }
+
+    const filter: FilterQuery<Milestone> = {
+      project: projectId,
+      ...additionalQuery,
+    };
+
+
+    const milestones = await this.db.milestone.find(filter)
     const mappedData = await Promise.all(milestones.map(milestone =>
       this.db.task.find({ milestone: milestone._id }).then(tasks => ({
         milestone,
@@ -228,6 +252,7 @@ export class ProjectController {
   }
 
   @Post('/:projectId/milestones')
+  @ProjectManagerOrAboveRequired()
   async createMilestone(
     @Param('projectId') projectId: string,
     @Body() payload: CreateMilestoneDto
@@ -239,6 +264,7 @@ export class ProjectController {
   }
 
   @Put('/:projectId/milestones/:milestoneId')
+  @ProjectManagerOrAboveRequired()
   async updateMilestone(
     @Param('projectId') projectId: string,
     @Param('milestoneId') milestoneId: string,

@@ -137,7 +137,7 @@ export class AuthController {
     @ReqUser() payload: AuthPayload,
   ) {
     const { oldPassword, newPassword, confirmPassword } = changePasswordDto;
-    if (newPassword !== confirmPassword) throw new HttpException(Messages.auth.passwordsNotMatch, HttpStatus.BAD_REQUEST,);
+    if (newPassword !== confirmPassword) throw new HttpException(Messages.auth.passwordsNotMatch, HttpStatus.BAD_REQUEST);
     const user = await this.db.user.findOne({
       email: payload.email,
     });

@@ -123,7 +123,7 @@ export class ChangePasswordDto {
     minLowercase: 0,
     minUppercase: 0
   }, {
-    message: "PASSWORD_TOO_WEAK"
+    message: "Mật khẩu yêu cầu 8 kí tự và 1 chữ số"
   })
   newPassword: string;
 

@@ -3,8 +3,8 @@ import { IsOptionalNonNullable } from "@/common/decorators/optional-non-nullable
 import { ProjectTypes } from "@/common/types/project";
 import { TaskTime } from "@/modules/task/dto/task.dto";
 import { ApiProperty } from "@nestjs/swagger";
-import { Transform } from "class-transformer";
-import { IsEmail, IsNotEmpty } from "class-validator";
+import { Expose, Transform } from "class-transformer";
+import { IsEmail, IsNotEmpty, IsOptional, IsString } from "class-validator";
 
 export class CreateProjectDto {
   @ApiProperty({
@@ -111,4 +111,15 @@ export class CreateMilestoneDto {
     default: 'example'
   })
   closed?: string;
+}
+
+export class MilsetoneFilterDto {
+  @IsOptional()
+  @Expose()
+  closed?: boolean;
+
+  @IsOptional()
+  @IsString()
+  @Expose()
+  query?: string;
 }
