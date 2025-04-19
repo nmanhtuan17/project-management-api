@@ -123,3 +123,11 @@ export class MilsetoneFilterDto {
   @Expose()
   query?: string;
 }
+
+export interface IProjectAttachment {
+  name: string
+  url: string
+  member: string
+  contentType: string
+  size: number
+}

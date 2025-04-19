@@ -29,16 +29,16 @@ export class StorageService {
     this.s3Region = this.config.get("storage.s3.region")
   }
 
-  async deleteFile(bucket: string, key: string) {
-    return this.s3.send(new DeleteObjectCommand({
-      Bucket: bucket,
+  async deleteFile(projectId: string, filename: string) {
+    const key = `projects/${projectId}/_${filename}`
+    return await this.s3.send(new DeleteObjectCommand({
+      Bucket: this.s3Bucket,
       Key: key
     }))
   }
 
   async uploadAttachmentFile(projectId: string, file: Express.Multer.File) {
-    const timestamp = new Date().getTime();
-    const key = `projects/${projectId}/${timestamp}_${file.originalname}`
+    const key = `projects/${projectId}/_${file.originalname}`
     await this.s3.send(
       new PutObjectCommand({
         Bucket: this.s3Bucket,

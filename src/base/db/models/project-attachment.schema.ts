@@ -34,7 +34,7 @@ export class ProjectAttachment {
     type: String,
     required: true,
   })
-  storeKey: string;
+  url: string;
 
   @Prop({
     type: Number,

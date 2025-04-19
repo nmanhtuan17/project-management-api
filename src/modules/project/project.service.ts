@@ -1,12 +1,12 @@
 import { DbService } from "@/base/db/services";
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
-import { CreateColumnDto, CreateLabelDto, CreateMilestoneDto, CreateProjectDto } from "./dto/project.dto";
+import { CreateColumnDto, CreateLabelDto, CreateMilestoneDto, CreateProjectDto, IProjectAttachment } from "./dto/project.dto";
 import { AuthPayload } from "../auth/dto/auth.dto";
 import { Messages } from "@/base/config";
 import { MilestoneStatus, ProjectRoles } from "@/common/types/project";
 import { randomString, slugify } from "@/common/utils";
 import { HydratedDocument } from "mongoose";
-import { Column, Milestone, Project } from "@/base/db";
+import { Column, Milestone, Project, ProjectAttachment } from "@/base/db";
 
 @Injectable()
 export class ProjectService {
@@ -175,5 +175,12 @@ export class ProjectService {
 
   async updateMilestone(milestoneId: string, payload: CreateMilestoneDto) {
     return await this.db.milestone.findByIdAndUpdate(milestoneId, payload)
+  }
+
+  async createAttachment(project: string, payload: IProjectAttachment) {
+    return await this.db.projectAttachment.create({
+      project,
+      ...payload
+    })
   }
 }

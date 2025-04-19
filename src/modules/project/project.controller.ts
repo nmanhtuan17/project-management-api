@@ -200,7 +200,6 @@ export class ProjectController {
     @Param('projectId') projectId: string,
     @MilsetoneFilter() milestoneFilter?: MilsetoneFilterDto
   ) {
-    console.log(milestoneFilter)
     let additionalQuery = {};
 
     const query = milestoneFilter.query;
@@ -273,6 +272,69 @@ export class ProjectController {
     return {
       data: await this.project.updateMilestone(milestoneId, payload),
       message: Messages.common.updated
+    }
+  }
+
+  @Get('/:projectId/attachment')
+  async getProjectAttachment(
+    @Param('projectId') projectId: string
+  ) {
+    const attachments = await this.db.projectAttachment.paginate({ project: projectId }, {
+      populate: [
+        {
+          path: 'member',
+          populate: {
+            path: 'user'
+          }
+        }
+      ]
+    })
+    return {
+      data: attachments.docs,
+      message: Messages.common.success
+    }
+  }
+
+  @Post('/:projectId/attachment')
+  @UseInterceptors(FileInterceptor('attachment'))
+  async uploadAttachment(
+    @Param('projectId') projectId: string,
+    @UploadedFile() attachment: Express.Multer.File,
+    @ReqUser() user: AuthPayload
+  ) {
+    const member = await this.db.projectMember.findOne({ project: projectId, user: user.userId })
+    const { url } = await this.storageService.uploadAttachmentFile(projectId, attachment)
+
+    const projectAttachment = {
+      name: attachment.originalname,
+      member: member._id.toString(),
+      contentType: attachment.mimetype,
+      url,
+      size: attachment.size
+    }
+
+    return {
+      data: await this.project.createAttachment(projectId, projectAttachment),
+      message: Messages.common.created
+    }
+  }
+
+  @Delete('/:projectId/attachment/:attachmentId')
+  async deleteAttachment(
+    @Param('projectId') projectId: string,
+    @Param('attachmentId') attachmentId: string,
+    @ReqUser() user: AuthPayload
+  ) {
+    const membership = await this.db.projectMember.findOne({ project: projectId, user: user.userId });
+    const attachment = await this.db.projectAttachment.getById(attachmentId)
+    if (membership.role === ProjectRoles.MANAGER || membership.role === ProjectRoles.OWNER || membership._id.toString() === attachment.member.toString()) {
+      await this.storageService.deleteFile(projectId, attachment.name)
+      await attachment.deleteOne()
+      return {
+        message: Messages.common.deleted
+      }
+    } else {
+      throw new HttpException('Bạn không có quyền xóa file này', HttpStatus.NOT_ACCEPTABLE)
     }
   }
 
