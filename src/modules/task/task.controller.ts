@@ -16,6 +16,8 @@ import { PaginationDto, ProjectRoles, TaskActivityType } from "@/common/types";
 import { Pagination } from "@/common/decorators/pagination.decorator";
 import { StorageService } from "@/base/services";
 import { compareArrayString } from "@/common/utils";
+import { NotificationService } from "@/modules/notification/notification.service";
+import { NotiType } from "@/common/types/notification";
 
 @Controller('projects/:projectId/tasks')
 @ApiBearerAuth()
@@ -27,6 +29,7 @@ export class TaskController {
     private task: TaskService,
     private project: ProjectService,
     private storage: StorageService,
+    private noti: NotificationService
   ) {
   }
 
@@ -175,6 +178,7 @@ export class TaskController {
         if (field === 'attachments' && compareArrayString(updateTaskDto[field], task.attachments.map(a => a.toString()))) continue;
         if (field === 'assignees' && compareArrayString(updateTaskDto[field], task.assignees.map(a => a._id.toString()))) continue;
         if (field === 'labels' && compareArrayString(updateTaskDto[field], task.labels.map(a => a.toString()))) continue;
+        if (field === 'milestone' && updateTaskDto[field].toString() === task.milestone.toString()) continue;
         if (field === 'parentTask') {
           const willBeParent = await this.task.getById(updateTaskDto.parentTask);
           if (task.project?.toString() || willBeParent.project?.toString()) {
@@ -226,8 +230,21 @@ export class TaskController {
       if (counted !== updateTaskDto.assignees.length) throw new HttpException(Messages.task.invalidAssignee, HttpStatus.BAD_REQUEST);
     }
     Object.assign(task, updateTaskDto);
-    // await task.save();
     const updatededTask = await this.db.task.findByIdAndUpdate(task._id, task, { new: true })
+    for (let a of updatededTask.assignees) {
+      if (a.toString() !== me._id.toString()) {
+        const assignee = await this.db.projectMember.getById(a)
+        await this.noti.sendNotification(assignee.user.toString(),
+          { title: Messages.notification.updateTask, body: `${updatededTask.title}` })
+        await this.noti.createNotification({
+          user: assignee.user.toString(),
+          title: Messages.notification.updateTask,
+          body: `${updatededTask.title}`,
+          type: NotiType.TASK,
+          task: updatededTask._id.toString()
+        })
+      }
+    }
     let signAttachments = await (await updatededTask.populate('attachments labels milestone'))
       .populate({
         path: 'assignees',
@@ -291,6 +308,21 @@ export class TaskController {
       labels: createTaskDto.labels,
       reporter: member._id.toString()
     });
+
+    for (let a of newTask.assignees) {
+      if (a.toString() !== member._id.toString()) {
+        const assignee = await this.db.projectMember.getById(a)
+        await this.noti.sendNotification(assignee.user.toString(),
+          { title: Messages.notification.newTask, body: `${newTask.title}` })
+        await this.noti.createNotification({
+          user: assignee.user.toString(),
+          title: Messages.notification.newTask,
+          body: `${newTask.title}`,
+          type: NotiType.TASK,
+          task: newTask._id.toString()
+        })
+      }
+    }
 
     return {
       data: newTask,

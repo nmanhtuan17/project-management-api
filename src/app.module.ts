@@ -7,6 +7,7 @@ import { configuration } from '@/base/config';
 import { AuthModule } from './modules/auth/auth.module';
 import { ProjectModule } from './modules/project/project.module';
 import { TaskModule } from './modules/task/task.module';
+import { NotificationModule } from '@/modules/notification/notification.module';
 
 @Module({
   imports: [
@@ -24,7 +25,8 @@ import { TaskModule } from './modules/task/task.module';
     DbModule,
     AuthModule,
     ProjectModule,
-    TaskModule
+    TaskModule,
+    NotificationModule
   ]
 })
 export class AppModule {}

@@ -167,5 +167,10 @@ export const Messages = {
     emojiDeleted: 'EMOJI_DELETED',
     emojiUpdated: 'EMOJI_UPDATED',
   },
+  notification: {
+    updateTask: 'Cập nhật công việc',
+    newEmail: 'Email mới',
+    newTask: 'Công việc mới'
+  }
   
 };

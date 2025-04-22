@@ -1,7 +1,7 @@
 import { Inject, Injectable, OnApplicationBootstrap } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { BaseRepository } from "@/base/db/repositories";
-import { Project, User, VerificationCode, Session, ProjectMember, Task, ProjectAttachment, ProjectLabel, Email, EmailAttachment, TaskActivity, ProjectInvitation, ProjectBoard, Column, Milestone } from "@/base/db/models";
+import { Project, User, VerificationCode, Session, ProjectMember, Task, ProjectAttachment, ProjectLabel, Email, EmailAttachment, TaskActivity, ProjectInvitation, ProjectBoard, Column, Milestone, DeviceToken, NotificationSchema } from "@/base/db/models";
 import { PaginateModel } from "mongoose";
 
 @Injectable()
@@ -20,7 +20,9 @@ export class DbService implements OnApplicationBootstrap {
   taskActivity: BaseRepository<TaskActivity>;
   projectBoard: BaseRepository<ProjectBoard>;
   column: BaseRepository<Column>;
-  milestone: BaseRepository<Milestone>
+  milestone: BaseRepository<Milestone>;
+  deviceToken: BaseRepository<DeviceToken>
+  notification: BaseRepository<NotificationSchema>
 
   constructor(
     @InjectModel(User.name)
@@ -52,7 +54,11 @@ export class DbService implements OnApplicationBootstrap {
     @InjectModel(Column.name)
     private columnModel: PaginateModel<Column>,
     @InjectModel(Milestone.name)
-    private milestoneModel: PaginateModel<Milestone>
+    private milestoneModel: PaginateModel<Milestone>,
+    @InjectModel(DeviceToken.name)
+    private deviceTokenModel: PaginateModel<DeviceToken>,
+    @InjectModel(NotificationSchema.name)
+    private notificationModel: PaginateModel<NotificationSchema>,
   ) {
   }
 
@@ -72,5 +78,7 @@ export class DbService implements OnApplicationBootstrap {
     this.projectBoard = new BaseRepository<ProjectBoard>(this.projectBoardModel)
     this.column = new BaseRepository<Column>(this.columnModel)
     this.milestone = new BaseRepository<Milestone>(this.milestoneModel)
+    this.deviceToken = new BaseRepository<DeviceToken>(this.deviceTokenModel)
+    this.notification = new BaseRepository<NotificationSchema>(this.notificationModel)
   }
 }
