@@ -11,6 +11,8 @@ import { ProjectRoles, ProjectTypes } from "@/common/types/project";
 import { InviteMemberDto } from "./dto/project.dto";
 import { MailService } from "../mail/mail.service";
 import { randomString } from "@/common/utils";
+import { NotificationService } from "@/modules/notification/notification.service";
+import { NotiType } from "@/common/types/notification";
 
 @Controller("projects/:projectId/members")
 @ApiTags('project')
@@ -20,7 +22,8 @@ export class ProjectMemberController {
   constructor(
     private db: DbService,
     private project: ProjectService,
-    private mail: MailService
+    private mail: MailService,
+    private noti: NotificationService
   ) { }
 
   @Get('/')
@@ -67,6 +70,14 @@ export class ProjectMemberController {
       user: userInvitting._id.toString()
     })
     await this.mail.sendInvitation(project, owner, userInvitting, newInvitation)
+    await this.noti.sendNotification(userInvitting._id.toString(),
+      { title: Messages.notification.newEmail, body: `Bạn có email mới` })
+    await this.noti.createNotification({
+      user: userInvitting._id.toString(),
+      title: Messages.notification.newTask,
+      body: 'Bạn có email mới',
+      type: NotiType.EMAIL
+    })
     return {
       message: Messages.project.invitedByEmail,
       status: HttpStatus.OK

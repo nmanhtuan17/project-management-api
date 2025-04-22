@@ -6,11 +6,13 @@ import { ProjectController } from "./project.controller";
 import { ProjectMemberController } from "./project-member.controller";
 import { MailModule } from "../mail/mail.module";
 import { StorageService } from "@/base/services";
+import { NotificationModule } from "@/modules/notification/notification.module";
 
 @Module({
   imports: [
     DbModule,
-    MailModule
+    MailModule,
+    NotificationModule
   ],
   providers: [
     ProjectService,
