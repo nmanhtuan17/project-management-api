@@ -338,23 +338,4 @@ export class ProjectController {
     }
   }
 
-  // @Get('/statistics')
-  // async getStatistics(
-  //   @ReqUser() user: AuthPayload
-  // ) {
-  //   console.log(123)
-  //   // const today = dayjs()
-  //   // const tasks = await this.db.task.find({ assignees: { $in: [user.userId.toString()] } })
-  //   // const overdueTasks = tasks.filter(task => today.isAfter(task.time.to))
-
-  //   // return {
-  //   //   data: {
-  //   //     overdue: overdueTasks,
-  //   //     total: tasks
-  //   //   },
-  //   //   message: ''
-  //   // }
-  // }
-
-
 }
