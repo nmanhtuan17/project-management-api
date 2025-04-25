@@ -36,7 +36,7 @@ export class NotificationService {
     });
 
     if (!sessions.length) return;
-    
+
     const validSessions = sessions.filter(session =>
       new Date() <= session.expirationDate
     );
@@ -58,5 +58,9 @@ export class NotificationService {
 
   async createNotification(noti: NofiticationDto) {
     return await this.db.notification.create(noti)
+  }
+
+  async getNotifications(userId: string) {
+    return this.db.notification.find({ user: userId })
   }
 }
