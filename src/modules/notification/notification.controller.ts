@@ -22,7 +22,7 @@ export class NotificationController {
     @ReqUser() user: AuthPayload,
     @Body() payload: DeviceTokenDto
   ) {
-    await this.noti.registerToken(payload.fcmToken, user.userId)
+    await this.noti.registerToken(payload.fcmToken, user.sessionId)
     return { message: 'Token registered successfully' };
   }
 
