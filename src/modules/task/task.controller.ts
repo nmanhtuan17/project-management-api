@@ -178,7 +178,7 @@ export class TaskController {
         if (field === 'attachments' && compareArrayString(updateTaskDto[field], task.attachments.map(a => a.toString()))) continue;
         if (field === 'assignees' && compareArrayString(updateTaskDto[field], task.assignees.map(a => a._id.toString()))) continue;
         if (field === 'labels' && compareArrayString(updateTaskDto[field], task.labels.map(a => a.toString()))) continue;
-        if (field === 'milestone' && updateTaskDto[field].toString() === task.milestone.toString()) continue;
+        if (field === 'milestone' && updateTaskDto[field].toString() === task?.milestone?.toString()) continue;
         if (field === 'parentTask') {
           const willBeParent = await this.task.getById(updateTaskDto.parentTask);
           if (task.project?.toString() || willBeParent.project?.toString()) {
