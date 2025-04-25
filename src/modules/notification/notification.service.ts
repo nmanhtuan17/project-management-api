@@ -1,6 +1,7 @@
+import { Messages } from "@/base/config";
 import { DbService } from "@/base/db/services";
 import { NofiticationDto } from "@/modules/notification/dto";
-import { Injectable } from "@nestjs/common";
+import { Injectable, UnauthorizedException } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import * as admin from 'firebase-admin';
 
@@ -29,17 +30,20 @@ export class NotificationService {
   }
 
   async sendNotification(userId: string, notification: { title: string, body: string }) {
-    const tokens = await this.db.session.find({ user: userId })
-    if (!tokens.length) return;
+    const sessions = await this.db.session.find({ user: userId })
+    if (!sessions.length) return;
 
-    const message = {
-      notification: notification,
-      tokens: tokens.map((t) => t.fcmToken)
-    };
-    try {
-      await admin.messaging().sendEachForMulticast(message);
-    } catch (error) {
-      console.error('Error sending notification:', error);
+    for (let session of sessions) {
+      if (new Date() > session.expirationDate) continue;
+      const message = {
+        notification: notification,
+        tokens: sessions.map((t) => t.fcmToken)
+      };
+      try {
+        await admin.messaging().sendEachForMulticast(message);
+      } catch (error) {
+        console.error('Error sending notification:', error);
+      }
     }
   }
 
