@@ -30,20 +30,29 @@ export class NotificationService {
   }
 
   async sendNotification(userId: string, notification: { title: string, body: string }) {
-    const sessions = await this.db.session.find({ user: userId, fcmToken: { $exists: true, $ne: null } })
-    if (!sessions.length) return;
+    const sessions = await this.db.session.find({
+      user: userId,
+      fcmToken: { $exists: true, $ne: null }
+    });
 
-    for (let session of sessions) {
-      if (new Date() > session.expirationDate) continue;
-      const message = {
-        notification: notification,
-        tokens: sessions.map((t) => t.fcmToken)
-      };
-      try {
-        await admin.messaging().sendEachForMulticast(message)
-      } catch (error) {
-        console.error('Error sending notification:', error);
-      }
+    if (!sessions.length) return;
+    
+    const validSessions = sessions.filter(session =>
+      new Date() <= session.expirationDate
+    );
+
+    if (!validSessions.length) return;
+
+    const message = {
+      notification: notification,
+      tokens: validSessions.map(session => session.fcmToken)
+    };
+
+    try {
+      const response = await admin.messaging().sendEachForMulticast(message);
+      console.log('Notifications sent successfully:', response);
+    } catch (error) {
+      console.error('Error sending notification:', error);
     }
   }
 
