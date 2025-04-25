@@ -39,4 +39,10 @@ export class NotificationSchema {
     type: String
   })
   email?: string
+
+  @Prop({
+    type: Boolean,
+    default: false
+  })
+  readed: boolean
 }

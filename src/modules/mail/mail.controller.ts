@@ -44,7 +44,8 @@ export class MailController {
           title: Messages.notification.newEmail,
           body: `Bạn nhận được email từ ${payload.from}`,
           type: NotiType.EMAIL,
-          email: payload.MessageId
+          email: payload.MessageId,
+          readed: false
         })
       }
     }

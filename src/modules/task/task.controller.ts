@@ -241,7 +241,8 @@ export class TaskController {
           title: Messages.notification.updateTask,
           body: `${updatededTask.title}`,
           type: NotiType.TASK,
-          task: updatededTask._id.toString()
+          task: updatededTask._id.toString(),
+          readed: false
         })
       }
     }
@@ -319,7 +320,8 @@ export class TaskController {
           title: Messages.notification.newTask,
           body: `${newTask.title}`,
           type: NotiType.TASK,
-          task: newTask._id.toString()
+          task: newTask._id.toString(),
+          readed: false
         })
       }
     }

@@ -1,6 +1,6 @@
 import { NotiType } from "@/common/types/notification";
 import { ApiProperty } from "@nestjs/swagger";
-import { IsString } from "class-validator";
+import { IsBoolean, IsString } from "class-validator";
 
 export class DeviceTokenDto {
   @ApiProperty({
@@ -60,4 +60,9 @@ export class NofiticationDto {
   @IsString()
   type: NotiType
 
+  @ApiProperty({
+    type: Boolean
+  })
+  @IsBoolean()
+  readed: boolean
 }

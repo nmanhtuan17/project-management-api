@@ -4,7 +4,7 @@ import { AuthPayload } from "@/modules/auth/dto/auth.dto";
 import { JwtAuthGuard } from "@/modules/auth/guards/jwt-auth.guard";
 import { DeviceTokenDto, NotiDto } from "@/modules/notification/dto";
 import { NotificationService } from "@/modules/notification/notification.service";
-import { Body, Controller, Get, Post, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get, Param, Post, UseGuards } from "@nestjs/common";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 
 @Controller('notification')
@@ -44,6 +44,15 @@ export class NotificationController {
   ){
     return {
       data: await this.noti.getNotifications(user.userId),
+      message: Messages.common.success
+    }
+  }
+  @Post('/:notificationId')
+  async markAsReadNoti(
+    @Param('notificationId') notificationId: string
+  ){
+    return {
+      data: await this.noti.readNoti(notificationId),
       message: Messages.common.success
     }
   }
