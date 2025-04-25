@@ -61,6 +61,11 @@ export class NotificationService {
   }
 
   async getNotifications(userId: string) {
-    return this.db.notification.find({ user: userId })
+    return this.db.notification.find({ user: userId }).populate({
+      path: 'task',
+      populate: {
+        path: 'project'
+      }
+    })
   }
 }
