@@ -10,7 +10,7 @@ export const Messages = {
     registrationSuccess: 'Đăng kí thành công',
     invalidVerification: 'INVALID_VERIFICATION',
     verificationEmailSent: 'VERIFICATION_EMAIL_SENT',
-    sessionExpired: 'SESSION_EXPIRED',
+    sessionExpired: 'Phiên đăng nhập hết hạn',
     passwordWasSent: 'Mật khẩu mới đã được gửi tới mail của bạn'
   },
   common: {

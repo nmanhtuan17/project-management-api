@@ -86,7 +86,6 @@ export class AuthController {
         message: Messages.auth.registrationSuccess,
       };
     } catch (e) {
-      console.log(e);
       if (e instanceof ApiError) {
         throw new HttpException(e.message, e.getStatus());
       } else {

@@ -19,15 +19,17 @@ export class NotificationService {
     });
   }
 
-  async registerToken(token: string, userId: string) {
-    const existingToken = await this.db.deviceToken.findOne({ fcmToken: token, user: userId })
-    if (!existingToken) {
-      return await this.db.deviceToken.create({ fcmToken: token, user: userId })
+  async registerToken(token: string, sessionId: string) {
+    const session = await this.db.session.getById(sessionId)
+    session.fcmToken = token
+    await session.save()
+    return {
+      message: 'Register token success'
     }
   }
 
   async sendNotification(userId: string, notification: { title: string, body: string }) {
-    const tokens = await this.db.deviceToken.find({ user: userId })
+    const tokens = await this.db.session.find({ user: userId })
     if (!tokens.length) return;
 
     const message = {
