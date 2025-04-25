@@ -165,4 +165,16 @@ export class AuthController {
   public jwtRefresh(@Body() data: RefreshTokenDto) {
     return this.authService.jwtRefresh(data.refresh_token);
   }
+
+  @Post('logout')
+  @UseGuards(JwtAuthGuard)
+  async logout(
+    @ReqUser() user: AuthPayload
+  ){
+    const session = await this.db.session.getById(user.sessionId)
+    await session.deleteOne()
+    return {
+      message: 'Logouted'
+    }
+  }
 }
