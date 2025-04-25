@@ -30,7 +30,7 @@ export class NotificationService {
   }
 
   async sendNotification(userId: string, notification: { title: string, body: string }) {
-    const sessions = await this.db.session.find({ user: userId })
+    const sessions = await this.db.session.find({ user: userId, fcmToken: { $exists: true, $ne: null } })
     if (!sessions.length) return;
 
     for (let session of sessions) {
@@ -40,7 +40,7 @@ export class NotificationService {
         tokens: sessions.map((t) => t.fcmToken)
       };
       try {
-        await admin.messaging().sendEachForMulticast(message);
+        await admin.messaging().sendEachForMulticast(message)
       } catch (error) {
         console.error('Error sending notification:', error);
       }
