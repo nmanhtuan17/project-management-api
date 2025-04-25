@@ -35,4 +35,8 @@ export class NotificationSchema {
     ref: Task.name
   })
   task?: Task | string
+  @Prop({
+    type: String
+  })
+  email?: string
 }

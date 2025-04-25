@@ -11,6 +11,8 @@ import { Attachment, Message } from "postmark";
 import { FileInterceptor, FilesInterceptor } from "@nestjs/platform-express";
 import { StorageService } from "@/base/services";
 import { file } from "googleapis/build/src/apis/file";
+import { NotificationService } from "@/modules/notification/notification.service";
+import { NotiType } from "@/common/types/notification";
 
 @Controller("mails")
 @ApiTags('mail')
@@ -19,7 +21,8 @@ export class MailController {
   constructor(
     private db: DbService,
     private mailService: MailService,
-    private storage: StorageService
+    private storage: StorageService,
+    private noti: NotificationService
   ) { }
 
   @Post('/postmark-inbound')
@@ -27,6 +30,24 @@ export class MailController {
     @Body() payload: any
   ) {
     console.log(payload)
+    for (let email of payload.ToFull) {
+      const user = await this.db.user.findOne({
+        internalEmail: email
+      })
+      if (user) {
+        await this.noti.sendNotification(user._id.toString(), {
+          title: Messages.notification.newEmail,
+          body: `Bạn nhận được email từ ${payload.from}`
+        })
+        await this.noti.createNotification({
+          user: user._id.toString(),
+          title: Messages.notification.newEmail,
+          body: `Bạn nhận được email từ ${payload.from}`,
+          type: NotiType.EMAIL,
+          email: payload.MessageId
+        })
+      }
+    }
     return {
       data: payload
     }

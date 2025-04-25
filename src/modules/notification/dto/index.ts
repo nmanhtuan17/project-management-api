@@ -48,6 +48,11 @@ export class NofiticationDto {
   })
   @IsString()
   task?: string
+  @ApiProperty({
+    type: String
+  })
+  @IsString()
+  email?: string
 
   @ApiProperty({
     type: NotiType
