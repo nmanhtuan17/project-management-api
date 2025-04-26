@@ -76,7 +76,8 @@ export class ProjectMemberController {
       user: userInvitting._id.toString(),
       title: Messages.notification.newTask,
       body: 'Bạn có email mới',
-      type: NotiType.EMAIL
+      type: NotiType.EMAIL,
+      readed: false
     })
     return {
       message: Messages.project.invitedByEmail,
