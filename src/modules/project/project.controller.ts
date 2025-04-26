@@ -8,13 +8,10 @@ import { CreateColumnDto, CreateLabelDto, CreateMilestoneDto, CreateProjectDto, 
 import { DbService } from "@/base/db/services";
 import { Messages } from "@/base/config";
 import { MilestoneStatus, ProjectRoles } from "@/common/types/project";
-import { HttpError } from "postmark/dist/client/errors/Errors";
 import { ProjectManagerOrAboveRequired, ProjectOwnerRequired } from "./decorators/project.decorator";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { StorageService } from "@/base/services";
-import { $Command } from "@aws-sdk/client-s3";
 import { Column, Milestone } from "@/base/db";
-import * as dayjs from "dayjs";
 import { ApiMilestoneFilter, MilsetoneFilter } from "@/modules/project/decorators/milestone-query.decorator";
 import { FilterQuery } from "mongoose";
 
@@ -351,4 +348,19 @@ export class ProjectController {
     }
   }
 
+  @Delete('/:projectId')
+  @ProjectOwnerRequired()
+  async deleteProject(
+    @Param('projectId') projectId: string
+  ) {
+    return await this.project.deleteProject(projectId)
+  }
+
+  @Delete('/:projectId/member/:userId')
+  async leaveProject(
+    @Param('projectId') projectId: string,
+    @Param('userId') userId: string
+  ) {
+    return await this.project.leaveProject(projectId, userId)
+  }
 }

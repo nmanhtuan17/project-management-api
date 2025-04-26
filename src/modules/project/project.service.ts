@@ -185,6 +185,20 @@ export class ProjectService {
   }
 
   async updateProject(projectId: string, payload: UpdateProjectDto) {
-    return await this.db.project.findByIdAndUpdate(projectId, payload)
+    return await this.db.project.findByIdAndUpdate(projectId, payload, {
+      new: true
+    })
+  }
+
+  async leaveProject(projectId: string, userId: string) {
+    return await this.db.projectMember.deleteOne({
+      project: projectId,
+      user: userId
+    })
+  }
+
+  async deleteProject(projectId: string) {
+    await this.db.projectMember.deleteMany({ project: projectId })
+    return await this.db.project.deleteOne({ _id: projectId })
   }
 }
