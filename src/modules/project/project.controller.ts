@@ -353,7 +353,10 @@ export class ProjectController {
   async deleteProject(
     @Param('projectId') projectId: string
   ) {
-    return await this.project.deleteProject(projectId)
+    return {
+      data: await this.project.deleteProject(projectId),
+      message: Messages.common.deleted
+    }
   }
 
   @Delete('/:projectId/leave/:memberId')
@@ -361,6 +364,9 @@ export class ProjectController {
     @Param('projectId') projectId: string,
     @Param('memberId') memberId: string
   ) {
-    return await this.project.removeMember(projectId, memberId)
+    return {
+      data: await this.project.removeMember(projectId, memberId),
+      message: Messages.common.deleted
+    }
   }
 }
