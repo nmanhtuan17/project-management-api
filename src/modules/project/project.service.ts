@@ -190,12 +190,6 @@ export class ProjectService {
     })
   }
 
-  async leaveProject(projectId: string, userId: string) {
-    return await this.db.projectMember.deleteOne({
-      project: projectId,
-      user: userId
-    })
-  }
 
   async deleteProject(projectId: string) {
     await this.db.projectMember.deleteMany({ project: projectId })

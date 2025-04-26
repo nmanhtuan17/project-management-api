@@ -356,11 +356,11 @@ export class ProjectController {
     return await this.project.deleteProject(projectId)
   }
 
-  @Delete('/:projectId/member/:userId')
+  @Delete('/:projectId/leave/:memberId')
   async leaveProject(
     @Param('projectId') projectId: string,
-    @Param('userId') userId: string
+    @Param('memberId') memberId: string
   ) {
-    return await this.project.leaveProject(projectId, userId)
+    return await this.project.removeMember(projectId, memberId)
   }
 }
