@@ -131,3 +131,15 @@ export interface IProjectAttachment {
   contentType: string
   size: number
 }
+
+export class UpdateProjectDto {
+  @ApiProperty({
+    default: 'example'
+  })
+  name?: string;
+
+  @ApiProperty({
+    default: 'example'
+  })
+  type?: ProjectTypes;
+}

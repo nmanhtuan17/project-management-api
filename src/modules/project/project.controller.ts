@@ -4,7 +4,7 @@ import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { ReqUser } from "@/common/decorators/req-user.decorator";
 import { AuthPayload } from "../auth/dto/auth.dto";
-import { CreateColumnDto, CreateLabelDto, CreateMilestoneDto, CreateProjectDto, MilsetoneFilterDto, VerifySlugDto } from "./dto/project.dto";
+import { CreateColumnDto, CreateLabelDto, CreateMilestoneDto, CreateProjectDto, MilsetoneFilterDto, UpdateProjectDto, VerifySlugDto } from "./dto/project.dto";
 import { DbService } from "@/base/db/services";
 import { Messages } from "@/base/config";
 import { MilestoneStatus, ProjectRoles } from "@/common/types/project";
@@ -73,6 +73,35 @@ export class ProjectController {
       data: project,
       message: Messages.common.created,
       status: HttpStatus.CREATED
+    }
+  }
+
+  @Put('/:projectId')
+  @ProjectOwnerRequired()
+  async updateProject(
+    @Param('projectId') projectId: string,
+    @Body() payload: UpdateProjectDto
+  ) {
+    return {
+      data: await this.project.updateProject(projectId, payload),
+      message: Messages.common.updated,
+      status: HttpStatus.OK
+    }
+  }
+
+  @Post('/:projectId/avatar')
+  @ProjectOwnerRequired()
+  @UseInterceptors(FileInterceptor('avatar'))
+  async updateProjectAvatar(
+    @Param('projectId') projectId: string,
+    @UploadedFile() file: Express.Multer.File
+  ) {
+    const { url } = await this.storageService.uploadAttachmentFile(projectId, file)
+    const projectUpdated = await this.project.updateProjectAvatar(projectId, url)
+
+    return {
+      data: projectUpdated,
+      message: Messages.common.updated
     }
   }
 
@@ -151,22 +180,6 @@ export class ProjectController {
       }
     } catch (error) {
       throw new HttpException("DELETE_FAIL", HttpStatus.BAD_REQUEST)
-    }
-  }
-
-  @Post('/:projectId/avatar')
-  @ProjectOwnerRequired()
-  @UseInterceptors(FileInterceptor('avatar'))
-  async updateProjectAvatar(
-    @Param('projectId') projectId: string,
-    @UploadedFile() file: Express.Multer.File
-  ) {
-    const { url } = await this.storageService.uploadAttachmentFile(projectId, file)
-    const projectUpdated = await this.project.updateProjectAvatar(projectId, url)
-
-    return {
-      data: projectUpdated,
-      message: Messages.common.updated
     }
   }
 

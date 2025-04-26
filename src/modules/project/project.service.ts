@@ -1,6 +1,6 @@
 import { DbService } from "@/base/db/services";
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
-import { CreateColumnDto, CreateLabelDto, CreateMilestoneDto, CreateProjectDto, IProjectAttachment } from "./dto/project.dto";
+import { CreateColumnDto, CreateLabelDto, CreateMilestoneDto, CreateProjectDto, IProjectAttachment, UpdateProjectDto } from "./dto/project.dto";
 import { AuthPayload } from "../auth/dto/auth.dto";
 import { Messages } from "@/base/config";
 import { MilestoneStatus, ProjectRoles } from "@/common/types/project";
@@ -182,5 +182,9 @@ export class ProjectService {
       project,
       ...payload
     })
+  }
+
+  async updateProject(projectId: string, payload: UpdateProjectDto) {
+    return await this.db.project.findByIdAndUpdate(projectId, payload)
   }
 }
