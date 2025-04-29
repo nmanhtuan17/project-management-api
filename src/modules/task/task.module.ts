@@ -6,15 +6,18 @@ import { TaskService } from "./task.service";
 import { StorageService } from "@/base/services";
 import { ProjectModule } from "../project/project.module";
 import { NotificationModule } from "@/modules/notification/notification.module";
+import { ScheduleModule } from '@nestjs/schedule';
+import { TaskScheduler } from './task.scheduler';
 
 @Module({
   imports: [
     DbModule,
     ProjectModule,
-    NotificationModule
+    NotificationModule,
+    ScheduleModule.forRoot()
   ],
   controllers: [TaskController],
-  providers: [TaskService, StorageService],
+  providers: [TaskService, StorageService, TaskScheduler],
   exports: [TaskService]
 })
 export class TaskModule { }
