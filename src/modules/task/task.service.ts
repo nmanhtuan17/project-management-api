@@ -37,7 +37,7 @@ export class TaskService {
     const milestoneTo = dayjs(milestone.time.to);
 
     if (taskFrom.isBefore(milestoneFrom) || taskTo.isAfter(milestoneTo)) {
-      throw new BadRequestException('Task time period must be within milestone time period');
+      throw new BadRequestException('Thời gian thực hiện nhiệm vụ phải nằm trong thời gian milestone');
     }
 
     return true;
