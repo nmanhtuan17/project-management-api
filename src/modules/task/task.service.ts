@@ -1,5 +1,5 @@
 import { DbService } from "@/base/db/services";
-import { Injectable } from "@nestjs/common";
+import { Injectable, BadRequestException } from "@nestjs/common";
 import { NotificationService } from "../notification/notification.service";
 import { NotiType } from "@/common/types/notification";
 import { ProjectMember } from "@/base/db/models/project-member.schema";
@@ -21,6 +21,26 @@ export class TaskService {
 
   async getById(id: string) {
     return await this.db.task.getById(id)
+  }
+
+  async validateTaskTimeAgainstMilestone(taskTime: { from: Date; to: Date }, milestoneId: string) {
+    if (!milestoneId) return true;
+
+    const milestone = await this.db.milestone.findOne({ _id: milestoneId });
+    if (!milestone) {
+      throw new BadRequestException('Milestone not found');
+    }
+
+    const taskFrom = dayjs(taskTime.from);
+    const taskTo = dayjs(taskTime.to);
+    const milestoneFrom = dayjs(milestone.time.from);
+    const milestoneTo = dayjs(milestone.time.to);
+
+    if (taskFrom.isBefore(milestoneFrom) || taskTo.isAfter(milestoneTo)) {
+      throw new BadRequestException('Task time period must be within milestone time period');
+    }
+
+    return true;
   }
 
   async checkTaskDeadlines() {

@@ -170,6 +170,13 @@ export class TaskController {
       _id: taskId,
     }).populate('assignees');
     if (!task) throw new HttpException(Messages.task.taskNotFound, HttpStatus.NOT_FOUND);
+
+    if (updateTaskDto.time && (updateTaskDto.milestone || task.milestone)) {
+      await this.task.validateTaskTimeAgainstMilestone(
+        updateTaskDto.time,
+        updateTaskDto.milestone || task.milestone.toString()
+      );
+    }
     let updatableFields = ['title', 'description', 'status', 'type', 'priority', 'time', 'attachments', 'parentTask', 'labels', 'assignees', 'milestone'];
 
     for (let field of updatableFields) {
@@ -270,6 +277,10 @@ export class TaskController {
     @Body() createTaskDto: CreateTaskDto,
   ) {
     const member = await this.project.getProjectMember(projectId, payload.userId);
+
+    if (createTaskDto.time && createTaskDto.milestone) {
+      await this.task.validateTaskTimeAgainstMilestone(createTaskDto.time, createTaskDto.milestone);
+    }
 
     if (createTaskDto.assignees) {
       const counted = await this.db.projectMember.count({
