@@ -9,6 +9,7 @@ import { ConfigService } from "@nestjs/config";
 import { User } from "@/base/db/models/user.schema";
 import { Task } from "@/base/db/models/task.schema";
 import { Project } from "@/base/db/models/project.schema";
+import * as dayjs from "dayjs";
 
 @Injectable()
 export class TaskService {
@@ -23,32 +24,25 @@ export class TaskService {
   }
 
   async checkTaskDeadlines() {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const tomorrow = new Date(today);
-    tomorrow.setDate(tomorrow.getDate() + 1);
-
-    const overdueTasks = await this.db.task.find({
-      'time.to': {
-        $gte: today,
-        $lt: tomorrow
-      },
+    const tasks = await this.db.task.find({
       status: { $ne: 'completed' }
     }).populate('assignees').populate('project');
 
     const tasksByUser = new Map<string, Array<Task & { project: Project }>>();
 
-    for (const task of overdueTasks) {
-      const taskObj = task as Task & { project: Project };
-      if (taskObj.assignees && taskObj.assignees.length > 0) {
-        for (const assignee of taskObj.assignees) {
-          const member = assignee as ProjectMember;
-          if (member && member.user) {
-            const userId = typeof member.user === 'string' ? member.user : member.user._id.toString();
-            if (!tasksByUser.has(userId)) {
-              tasksByUser.set(userId, []);
+    for (const task of tasks) {
+      if (dayjs(task.time.to).isSame(dayjs(), 'day')) {
+        const taskObj = task as Task & { project: Project };
+        if (taskObj.assignees && taskObj.assignees.length > 0) {
+          for (const assignee of taskObj.assignees) {
+            const member = assignee as ProjectMember;
+            if (member && member.user) {
+              const userId = typeof member.user === 'string' ? member.user : member.user._id.toString();
+              if (!tasksByUser.has(userId)) {
+                tasksByUser.set(userId, []);
+              }
+              tasksByUser.get(userId).push(taskObj);
             }
-            tasksByUser.get(userId).push(taskObj);
           }
         }
       }
@@ -56,14 +50,12 @@ export class TaskService {
 
     for (const [userId, tasks] of tasksByUser) {
       const user = await this.db.user.findOne({ _id: userId }) as User;
-      
       if (user && user.internalEmail) {
         const webDomain = this.config.get('webDomain');
         const taskList = tasks.map(task => ({
           title: task.title,
-          dueDate: task.time.to.toLocaleDateString(),
+          dueDate: dayjs(task.time.to).format('DD/MM/YYYY'),
           projectName: task.project.name,
-          description: task.description || 'Không có mô tả',
           taskUrl: `${webDomain}/tasks/${task._id}`
         }));
 

@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose/dist/mongoose.module';
+import { ScheduleModule } from '@nestjs/schedule';
 import { DbModule } from '@/base/db';
 import { DbService } from '@/base/db/services';
 import { configuration } from '@/base/config';
@@ -22,6 +23,7 @@ import { NotificationModule } from '@/modules/notification/notification.module';
       }),
       inject: [ConfigService],
     }),
+    ScheduleModule.forRoot(),
     DbModule,
     AuthModule,
     ProjectModule,

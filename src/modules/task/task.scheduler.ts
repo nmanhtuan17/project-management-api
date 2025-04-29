@@ -8,7 +8,7 @@ export class TaskScheduler {
 
   constructor(private readonly taskService: TaskService) {}
 
-  @Cron(CronExpression.EVERY_5_MINUTES)
+  @Cron(CronExpression.EVERY_MINUTE)
   async handleTaskDeadlines() {
     this.logger.log('Checking for upcoming task deadlines...');
     try {
