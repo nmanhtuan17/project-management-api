@@ -54,6 +54,16 @@ export class MailController {
     }
   }
 
+  @Post('/postmark')
+  async inboundEmail(
+    @Body() payload: any
+  ) {
+    console.log(payload)
+    return {
+      data: payload
+    }
+  }
+
   @Post('/postmark-outbound')
   async outboundEmail(
     @Body() payload: any
