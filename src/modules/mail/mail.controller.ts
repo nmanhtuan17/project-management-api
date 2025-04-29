@@ -30,25 +30,25 @@ export class MailController {
     @Body() payload: any
   ) {
     console.log(payload)
-    for (let email of payload.ToFull) {
-      const user = await this.db.user.findOne({
-        internalEmail: email
-      })
-      if (user) {
-        await this.noti.sendNotification(user._id.toString(), {
-          title: Messages.notification.newEmail,
-          body: `Bạn nhận được email từ ${payload.from}`
-        })
-        await this.noti.createNotification({
-          user: user._id.toString(),
-          title: Messages.notification.newEmail,
-          body: `Bạn nhận được email từ ${payload.from}`,
-          type: NotiType.EMAIL,
-          email: payload.MessageId,
-          readed: false
-        })
-      }
-    }
+    // for (let email of payload.ToFull) {
+    //   const user = await this.db.user.findOne({
+    //     internalEmail: email
+    //   })
+    //   if (user) {
+    //     await this.noti.sendNotification(user._id.toString(), {
+    //       title: Messages.notification.newEmail,
+    //       body: `Bạn nhận được email từ ${payload.from}`
+    //     })
+    //     await this.noti.createNotification({
+    //       user: user._id.toString(),
+    //       title: Messages.notification.newEmail,
+    //       body: `Bạn nhận được email từ ${payload.from}`,
+    //       type: NotiType.EMAIL,
+    //       email: payload.MessageId,
+    //       readed: false
+    //     })
+    //   }
+    // }
     return {
       data: payload
     }
