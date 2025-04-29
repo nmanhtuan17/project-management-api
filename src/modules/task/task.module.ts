@@ -8,12 +8,13 @@ import { ProjectModule } from "../project/project.module";
 import { NotificationModule } from "@/modules/notification/notification.module";
 import { ScheduleModule } from '@nestjs/schedule';
 import { TaskScheduler } from './task.scheduler';
-
+import { MailModule } from "../mail/mail.module";
 @Module({
   imports: [
     DbModule,
     ProjectModule,
     NotificationModule,
+    MailModule,
     ScheduleModule.forRoot()
   ],
   controllers: [TaskController],
