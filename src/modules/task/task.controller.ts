@@ -1,5 +1,5 @@
 import { BadRequestException, Body, Controller, Delete, ForbiddenException, Get, HttpException, HttpStatus, Param, Post, Put, UnauthorizedException, UseGuards } from "@nestjs/common";
-import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiTags, ApiOperation, ApiResponse } from "@nestjs/swagger";
 import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 import { Messages } from "@/base/config";
 import { FilterQuery, HydratedDocument, Types } from "mongoose";
@@ -18,6 +18,7 @@ import { StorageService } from "@/base/services";
 import { compareArrayString } from "@/common/utils";
 import { NotificationService } from "@/modules/notification/notification.service";
 import { NotiType } from "@/common/types/notification";
+import { TaskPerformanceMetricsDto } from './dto/task-performance.dto';
 
 @Controller('projects/:projectId/tasks')
 @ApiBearerAuth()
@@ -97,6 +98,38 @@ export class TaskController {
       data: signedTasks,
       _pagination: tasks,
     };
+  }
+
+
+  @Get('/performance/member/:memberId')
+  async getMemberTaskPerformance(
+    @Param('projectId') projectId: string,
+    @Param('memberId') memberId: string
+  ): Promise<{ data: TaskPerformanceMetricsDto, message: string }> {
+    return {
+      data: await this.task.getMemberTaskPerformance(projectId, memberId),
+      message: Messages.common.success
+    }
+  }
+
+  @Get('/performance/members')
+  async getProjectMembersPerformance(
+    @Param('projectId') projectId: string
+  ): Promise<{ data: Record<string, TaskPerformanceMetricsDto>, message: string }> {
+    return {
+      data: await this.task.getProjectMembersPerformance(projectId),
+      message: Messages.common.success
+    }
+  }
+
+  @Get('/performance')
+  async getProjectPerformance(
+    @Param('projectId') projectId: string
+  ): Promise<{ data: TaskPerformanceMetricsDto, message: string }> {
+    return {
+      data: await this.task.getProjectPerformance(projectId),
+      message: Messages.common.success
+    }
   }
 
   @Get('/:taskId')
@@ -361,4 +394,5 @@ export class TaskController {
       message: Messages.common.updated
     }
   }
+
 }

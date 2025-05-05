@@ -10,6 +10,8 @@ import { User } from "@/base/db/models/user.schema";
 import { Task } from "@/base/db/models/task.schema";
 import { Project } from "@/base/db/models/project.schema";
 import * as dayjs from "dayjs";
+import { TaskPerformanceMetricsDto } from "./dto/task-performance.dto";
+import { TaskStatus } from "@/common/types";
 
 @Injectable()
 export class TaskService {
@@ -89,6 +91,81 @@ export class TaskService {
           })
         });
       }
+    }
+  }
+
+  async getMemberTaskPerformance(projectId: string, memberId: string): Promise<TaskPerformanceMetricsDto> {
+    const tasks = await this.db.task.find({
+      project: projectId,
+      assignees: { $in: [memberId] },
+      archived: false
+    });
+
+    const totalTasks = tasks.length;
+    const completedTasks = tasks.filter(task => task.status === TaskStatus.DONE).length;
+    const onTimeCompletedTasks = tasks.filter(task => {
+      if (task.status !== TaskStatus.DONE || !task.time?.to) return false;
+      const completionDate = dayjs(task.updatedAt);
+      const deadline = dayjs(task.time.to);
+      return completionDate.isBefore(deadline) || completionDate.isSame(deadline);
+    }).length;
+
+    const delayedTasks = completedTasks - onTimeCompletedTasks;
+
+    const completionRate = totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0;
+    const onTimeCompletionRate = completedTasks > 0 ? (onTimeCompletedTasks / completedTasks) * 100 : 0;
+    const delayRate = completedTasks > 0 ? (delayedTasks / completedTasks) * 100 : 0;
+
+    return {
+      completionRate: Number(completionRate.toFixed(1)),
+      onTimeCompletionRate: Number(onTimeCompletionRate.toFixed(1)),
+      delayRate: Number(delayRate.toFixed(1)),
+      totalTasks,
+      completedTasks,
+      onTimeCompletedTasks,
+      delayedTasks
+    };
+  }
+
+  async getProjectMembersPerformance(projectId: string): Promise<Record<string, TaskPerformanceMetricsDto>> {
+    const members = await this.db.projectMember.find({ project: projectId })
+
+    const performanceData: Record<string, TaskPerformanceMetricsDto> = {};
+    
+    for (const member of members) {
+      const memberId = typeof member === 'string' ? member : member._id.toString();
+      const metrics = await this.getMemberTaskPerformance(projectId, memberId);
+      performanceData[memberId] = metrics;
+    }
+    return performanceData;
+  }
+
+  async getProjectPerformance(projectId: string): Promise<TaskPerformanceMetricsDto> {
+    const tasks = await this.db.task.find({ project: projectId, archived: false });
+
+    const totalTasks = tasks.length;
+    const completedTasks = tasks.filter(task => task.status === TaskStatus.DONE).length;
+    const onTimeCompletedTasks = tasks.filter(task => {
+      if (task.status !== TaskStatus.DONE || !task.time?.to) return false;
+      const completionDate = dayjs(task.updatedAt);
+      const deadline = dayjs(task.time.to);
+      return completionDate.isBefore(deadline) || completionDate.isSame(deadline);  
+    }).length;
+
+    const delayedTasks = completedTasks - onTimeCompletedTasks;
+
+    const completionRate = totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0;
+    const onTimeCompletionRate = completedTasks > 0 ? (onTimeCompletedTasks / completedTasks) * 100 : 0;
+    const delayRate = completedTasks > 0 ? (delayedTasks / completedTasks) * 100 : 0;
+
+    return {
+      completionRate: Number(completionRate.toFixed(1)),
+      onTimeCompletionRate: Number(onTimeCompletionRate.toFixed(1)),
+      delayRate: Number(delayRate.toFixed(1)),
+      totalTasks,
+      completedTasks,
+      onTimeCompletedTasks,
+      delayedTasks
     }
   }
 }
