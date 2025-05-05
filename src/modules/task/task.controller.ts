@@ -1,5 +1,5 @@
-import { BadRequestException, Body, Controller, Delete, ForbiddenException, Get, HttpException, HttpStatus, Param, Post, Put, UnauthorizedException, UseGuards } from "@nestjs/common";
-import { ApiBearerAuth, ApiTags, ApiOperation, ApiResponse } from "@nestjs/swagger";
+import { BadRequestException, Body, Controller, Delete, ForbiddenException, Get, HttpException, HttpStatus, Param, Post, Put, UnauthorizedException, UseGuards, UseInterceptors, UploadedFile } from "@nestjs/common";
+import { ApiBearerAuth, ApiTags, ApiOperation, ApiResponse, ApiConsumes, ApiBody } from "@nestjs/swagger";
 import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 import { Messages } from "@/base/config";
 import { FilterQuery, HydratedDocument, Types } from "mongoose";
@@ -19,6 +19,7 @@ import { compareArrayString } from "@/common/utils";
 import { NotificationService } from "@/modules/notification/notification.service";
 import { NotiType } from "@/common/types/notification";
 import { TaskPerformanceMetricsDto } from './dto/task-performance.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('projects/:projectId/tasks')
 @ApiBearerAuth()
@@ -395,4 +396,38 @@ export class TaskController {
     }
   }
 
+  @Post(':taskId/attachments')
+  @UseInterceptors(FileInterceptor('file'))
+  async uploadAttachment(
+    @Param('projectId') projectId: string,
+    @Param('taskId') taskId: string,
+    @UploadedFile() file: Express.Multer.File,
+    @ReqUser() user: AuthPayload,
+  ) {
+    const member = await this.db.projectMember.findOne({ project: projectId, user: user.userId })
+    const { url } = await this.storage.uploadAttachmentFile(projectId, file)
+
+    const taskAttachment = {
+      name: file.originalname,
+      member: member._id.toString(),
+      contentType: file.mimetype,
+      url,
+      size: file.size
+    }
+    return this.task.uploadAttachment(taskId, taskAttachment);
+  }
+
+  // @Get(':taskId/attachments')
+  // async getTaskAttachments(
+  //   @Param('taskId') taskId: string,
+  // ): Promise<TaskAttachmentResponseDto[]> {
+  //   return this.task.getTaskAttachments(taskId);
+  // }
+
+  // @Delete('attachments/:attachmentId')
+  // async deleteAttachment(
+  //   @Param('attachmentId') attachmentId: string,
+  // ): Promise<void> {
+  //   return this.task.deleteAttachment(attachmentId);
+  // }
 }

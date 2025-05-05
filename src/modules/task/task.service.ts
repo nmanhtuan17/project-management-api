@@ -1,5 +1,5 @@
 import { DbService } from "@/base/db/services";
-import { Injectable, BadRequestException } from "@nestjs/common";
+import { Injectable, BadRequestException, NotFoundException } from "@nestjs/common";
 import { NotificationService } from "../notification/notification.service";
 import { NotiType } from "@/common/types/notification";
 import { ProjectMember } from "@/base/db/models/project-member.schema";
@@ -12,13 +12,16 @@ import { Project } from "@/base/db/models/project.schema";
 import * as dayjs from "dayjs";
 import { TaskPerformanceMetricsDto } from "./dto/task-performance.dto";
 import { TaskStatus } from "@/common/types";
+import { StorageService } from "@/base/services";
+import { TaskAttachment } from "@/base/db";
 
 @Injectable()
 export class TaskService {
   constructor(
     private db: DbService,
     private mailService: MailService,
-    private config: ConfigService
+    private config: ConfigService,
+    private storage: StorageService
   ) {}
 
   async getById(id: string) {
@@ -167,5 +170,12 @@ export class TaskService {
       onTimeCompletedTasks,
       delayedTasks
     }
+  }
+
+  async uploadAttachment(taskId: string, file: Pick<TaskAttachment, 'name' | 'member' | 'contentType' | 'url' | 'size'>) {
+    return await this.db.taskAttachment.create({
+      ...file,
+      task: taskId
+    })
   }
 }

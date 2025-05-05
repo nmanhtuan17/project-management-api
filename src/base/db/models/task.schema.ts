@@ -7,9 +7,9 @@ import { IsOptional } from "class-validator";
 import { TaskPriority, TaskStatus, TaskTypes } from "@/common/types/task";
 import { ProjectMember } from "./project-member.schema";
 import { ProjectLabel } from "./project-label.schema";
-import { ProjectAttachment } from "./project-attachment.schema";
 import { TaskTime } from "@/modules/task/dto/task.dto";
 import { Milestone } from "./milestone.schema";
+import { TaskAttachment } from "./task-attachment.schema";
 
 @Schema({
   timestamps: true
@@ -113,11 +113,11 @@ export class Task {
   @Prop({
     type: [{
       type: mongoose.Schema.Types.ObjectId,
-      ref: ProjectAttachment.name
+      ref: TaskAttachment.name
     }],
     default: []
   })
-  attachments?: ProjectAttachment[] | string[];
+  attachments?: TaskAttachment[] | string[];
 
   @Prop({
     type: Number,

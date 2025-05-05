@@ -1,7 +1,7 @@
 import { Inject, Injectable, OnApplicationBootstrap } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { BaseRepository } from "@/base/db/repositories";
-import { Project, User, VerificationCode, Session, ProjectMember, Task, ProjectAttachment, ProjectLabel, Email, EmailAttachment, TaskActivity, ProjectInvitation, ProjectBoard, Column, Milestone, DeviceToken, NotificationSchema } from "@/base/db/models";
+import { Project, User, VerificationCode, Session, ProjectMember, Task, ProjectAttachment, ProjectLabel, Email, EmailAttachment, TaskActivity, ProjectInvitation, ProjectBoard, Column, Milestone, DeviceToken, NotificationSchema, TaskAttachment } from "@/base/db/models";
 import { PaginateModel } from "mongoose";
 
 @Injectable()
@@ -23,6 +23,7 @@ export class DbService implements OnApplicationBootstrap {
   milestone: BaseRepository<Milestone>;
   deviceToken: BaseRepository<DeviceToken>
   notification: BaseRepository<NotificationSchema>
+  taskAttachment: BaseRepository<TaskAttachment>
 
   constructor(
     @InjectModel(User.name)
@@ -59,6 +60,8 @@ export class DbService implements OnApplicationBootstrap {
     private deviceTokenModel: PaginateModel<DeviceToken>,
     @InjectModel(NotificationSchema.name)
     private notificationModel: PaginateModel<NotificationSchema>,
+    @InjectModel(TaskAttachment.name)
+    private taskAttachmentModel: PaginateModel<TaskAttachment>
   ) {
   }
 
@@ -80,5 +83,6 @@ export class DbService implements OnApplicationBootstrap {
     this.milestone = new BaseRepository<Milestone>(this.milestoneModel)
     this.deviceToken = new BaseRepository<DeviceToken>(this.deviceTokenModel)
     this.notification = new BaseRepository<NotificationSchema>(this.notificationModel)
+    this.taskAttachment = new BaseRepository<TaskAttachment>(this.taskAttachmentModel)
   }
 }
