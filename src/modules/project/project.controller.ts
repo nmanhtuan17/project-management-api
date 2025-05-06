@@ -299,11 +299,14 @@ export class ProjectController {
         }
       ]
     })
+    
     return {
       data: attachments.docs,
       message: Messages.common.success
     }
   }
+
+
 
   @Post('/:projectId/attachment')
   @UseInterceptors(FileInterceptor('attachment'))
