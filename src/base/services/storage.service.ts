@@ -35,6 +35,7 @@ export class StorageService {
       Bucket: this.s3Bucket,
       Key: key
     }))
+    
   }
 
   async uploadAttachmentFile(projectId: string, file: Express.Multer.File) {
