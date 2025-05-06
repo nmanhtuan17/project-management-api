@@ -34,6 +34,7 @@ export class StorageService {
     return await this.s3.send(new DeleteObjectCommand({
       Bucket: this.s3Bucket,
       Key: key
+      
     }))
   }
 
